@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const cors = require('cors');
 
 
-// --- ⚙️ CONFIGURATION ---
+
 const BUCKET_NAME = process.env.BUCKET_NAME;
 const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
 const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID;

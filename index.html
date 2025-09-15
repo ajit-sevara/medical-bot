@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visual Health AI Analysis</title>
     <style>
-        /* Modern Font & Base Styles */
+        
         :root {
             --primary-color: #3b82f6;
             --primary-hover: #2563eb;
@@ -30,7 +30,7 @@
             box-sizing: border-box;
         }
 
-        /* Main App Container */
+        
         .app-container {
             background-color: var(--card-background);
             border-radius: 16px;
@@ -54,7 +54,7 @@
             margin-bottom: 2rem;
         }
 
-        /* Upload Section */
+        
         .upload-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -81,7 +81,7 @@
             font-size: 0.9rem;
         }
         
-        /* Buttons */
+        
         .analyze-button {
             background-color: var(--primary-color);
             color: white;
@@ -104,7 +104,7 @@
             cursor: not-allowed;
         }
 
-        /* Status & Result Sections */
+        
         .status-box, .result-wrapper {
             margin-top: 2rem;
             border-radius: 8px;
@@ -112,7 +112,7 @@
             text-align: left;
         }
         
-        /* Spinner for loading state */
+        
         .status-box {
             display: flex;
             align-items: center;
@@ -136,7 +136,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* --- THE SCROLLABLE RESULT CONTAINER --- */
+        
         .result-wrapper {
             background-color: var(--success-bg);
             border: 1px solid var(--success-border);
@@ -150,11 +150,11 @@
             border-bottom: 1px solid var(--success-border);
         }
         
-        /* This is the container that scrolls */
+        
         #result-content {
             max-height: 400px;
-            overflow-y: auto; /* Add scrollbar only when needed */
-            padding-right: 0.5rem; /* Space for the scrollbar */
+            overflow-y: auto; 
+            padding-right: 0.5rem; 
             color: #155e2b;
         }
 
@@ -214,7 +214,7 @@
 </main>
 
 <script>
-    // --- DOM Element References ---
+    
     const uploadForm = document.getElementById('uploadForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusBox = document.getElementById('statusBox');
@@ -223,11 +223,11 @@
     const resultText = document.getElementById('resultText');
     let pollingInterval;
 
-    // --- Event Listener ---
+    
     uploadForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         
-        // --- 1. Reset UI and Show Initial Status ---
+        
         submitBtn.disabled = true;
         submitBtn.textContent = 'Processing...';
         resultWrapper.classList.add('hidden');
@@ -235,25 +235,25 @@
         statusBox.classList.remove('hidden');
 
         try {
-            // --- 2. Convert Images to Base64 ---
-            // ADDED ONE MORE ITEM TO THE PROMISE.ALL ARRAY
+            
+            
             const [lipsBase64, tongueBase64, eyesBase64, nailsBase64] = await Promise.all([
                 toBase64(document.getElementById('lips').files[0]),
                 toBase64(document.getElementById('tongue').files[0]),
                 toBase64(document.getElementById('eyes').files[0]),
-                toBase64(document.getElementById('nails').files[0]) // ADDED
+                toBase64(document.getElementById('nails').files[0])
             ]);
             
-            // --- 3. Send to Server to Start Job ---
+            
             const response = await fetch('/upload', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // ADDED THE NEW NAILS IMAGE TO THE REQUEST BODY
+                
                 body: JSON.stringify({ 
                     lips: lipsBase64, 
                     tongue: tongueBase64, 
                     eyes: eyesBase64, 
-                    nails: nailsBase64 // ADDED
+                    nails: nailsBase64 
                 })
             });
 
@@ -262,9 +262,9 @@
                 throw new Error(errorData.message || `Server error: ${response.status}`);
             }
 
-            // --- 4. Get Job ID and Start Polling ---
+            
             const { jobId } = await response.json();
-            statusText.textContent = 'Analyzing images with AI...';
+            statusText.textContent = 'Analyzing images...';
             pollForResult(jobId);
 
         } catch (error) {
@@ -288,12 +288,12 @@
                     clearInterval(pollingInterval);
                     handleError('The analysis process failed on the server.');
                 }
-                // If 'processing', the interval continues silently.
+                
             } catch (error) {
                 clearInterval(pollingInterval);
                 handleError(`A network error occurred: ${error.message}`);
             }
-        }, 3000); // Poll every 3 seconds
+        }, 3000); 
     }
 
     function displayResult(result) {
@@ -310,7 +310,7 @@
         submitBtn.textContent = 'Analyze Now';
     }
 
-    // --- Helper Function ---
+    
     function toBase64(file) {
         return new Promise((resolve, reject) => {
             if (!file) {

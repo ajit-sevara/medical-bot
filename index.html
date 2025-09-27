@@ -135,10 +135,10 @@
             display: none !important;
         }
         
-        /* New Styles for Capture Feature */
+        /* Styles for Capture Feature */
         .capture-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2x2 grid */
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -219,24 +219,6 @@
             pointer-events: none;
         }
 
-        .eye-guides {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70%;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .eye-circle {
-            width: 80px;
-            height: 80px;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
-        }
-
         .modal-capture-button, .modal-close-button {
             border: none;
             padding: 0.8rem 1.5rem;
@@ -255,6 +237,59 @@
         .modal-close-button {
             background-color: #e2e8f0;
             color: var(--text-color);
+        }
+
+        /* --- NEW STYLES FOR OVERLAY GUIDES --- */
+        .guide-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .eye-guides {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .eye-circle {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        
+        .lips-guide svg {
+            width: 220px;
+            height: auto;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+        }
+        
+        .tongue-guide {
+            width: 100px;
+            height: 160px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%; /* Creates an oval */
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        
+        .nails-guide {
+            width: 180px;
+            height: 120px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px; /* Rounded rectangle */
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
     </style>
@@ -331,7 +366,7 @@
 
     // --- State Management ---
     let currentStream;
-    let currentPhotoType; // Will be 'eyes', 'lips', etc.
+    let currentPhotoType;
     const capturedPhotos = {
         eyes: null,
         lips: null,
@@ -345,8 +380,20 @@
         currentPhotoType = photoType;
         cameraModal.classList.remove('hidden');
 
+        // --- THIS IS THE UPDATED SECTION ---
+        // Dynamically set the overlay based on the photo type
         if (photoType === 'eyes') {
             cameraOverlay.innerHTML = `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>`;
+        } else if (photoType === 'lips') {
+            cameraOverlay.innerHTML = `<div class="guide-container lips-guide">
+                <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 30 Q 25 10, 50 30 T 90 30 Q 75 55, 50 50 T 10 30 Z" fill="none" stroke="rgba(255, 255, 255, 0.8)" stroke-width="2"/>
+                </svg>
+            </div>`;
+        } else if (photoType === 'tongue') {
+            cameraOverlay.innerHTML = `<div class="guide-container"><div class="tongue-guide"></div></div>`;
+        } else if (photoType === 'nails') {
+            cameraOverlay.innerHTML = `<div class="guide-container"><div class="nails-guide"></div></div>`;
         } else {
             cameraOverlay.innerHTML = '';
         }

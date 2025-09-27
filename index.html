@@ -135,7 +135,6 @@
             display: none !important;
         }
         
-        /* Styles for Capture Feature */
         .capture-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -177,7 +176,6 @@
             background-color: #4338ca;
         }
 
-        /* Camera Modal Styles */
         .modal {
             position: fixed;
             top: 0;
@@ -239,7 +237,6 @@
             color: var(--text-color);
         }
 
-        /* --- STYLES FOR OVERLAY GUIDES --- */
         .guide-container {
             position: absolute;
             top: 50%;
@@ -292,7 +289,6 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
-        /* --- ✅ MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem;
@@ -350,20 +346,20 @@
     <form id="analysisForm">
         <div class="capture-grid">
             <div class="capture-area" id="eyes-area">
-                <img id="eyes-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E" alt="Eyes Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('eyes')">📸 Capture Eyes</button>
+                <img id="eyes-preview" src="./assets/eyes.png" alt="Eyes Preview" class="preview-image">
+                <button type="button" class="capture-button" onclick="openCamera('eyes')">Capture Eyes</button>
             </div>
             <div class="capture-area" id="lips-area">
-                <img id="lips-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 8c3.3 1.4 4.7 4.9 3.3 8.2-1.4 3.3-4.9 4.7-8.2 3.3-3.3-1.4-4.7-4.9-3.3-8.2 1.4-3.3 4.9-4.7 8.2-3.3'%3E%3C/path%3E%3Cpath d='M12 12.5a4 4 0 1 0 0-5'%3E%3C/path%3E%3C/svg%3E" alt="Lips Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('lips')">📸 Capture Lips</button>
+                <img id="lips-preview" src="./assets/lips.png" alt="Lips Preview" class="preview-image">
+                <button type="button" class="capture-button" onclick="openCamera('lips')">Capture Lips</button>
             </div>
             <div class="capture-area" id="tongue-area">
-                <img id="tongue-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.2s-3.9-2.3-5.2-3c-1.3-.7-2.8-.7-4.1 0-1.3.7-3.2 1.8-5.2 3S2 13 2 15a7 7 0 0 0 7 7h3z'%3E%3C/path%3E%3C/svg%3E" alt="Tongue Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('tongue')">📸 Capture Tongue</button>
+                <img id="tongue-preview" src="./assets/tongue.png" alt="Tongue Preview" class="preview-image">
+                <button type="button" class="capture-button" onclick="openCamera('tongue')">Capture Tongue</button>
             </div>
             <div class="capture-area" id="nails-area">
-                <img id="nails-preview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18.7 18.7a2.4 2.4 0 0 1-3.4 0l-1.3-1.3a2.4 2.4 0 0 1 0-3.4l8-8c1.4-1.4 3.6-1.4 5 0l-4.3 4.3c-.6.6-1.5.6-2.1 0l-1.9-1.9c-.6-.6-.6-1.5 0-2.1l4.3-4.3c-1.4-1.4-3.6-1.4-5 0l-8 8a2.4 2.4 0 0 0 0 3.4l1.3 1.3a2.4 2.4 0 0 0 3.4 0l5.3-5.3'%3E%3C/path%3E%3C/svg%3E" alt="Nails Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('nails')">📸 Capture Nails</button>
+                <img id="nails-preview" src="./assets/nail.png" alt="Nails Preview" class="preview-image">
+                <button type="button" class="capture-button" onclick="openCamera('nails')">Capture Nails</button>
             </div>
         </div>
         <button type="submit" id="submitBtn" class="analyze-button" disabled>Analyze Now</button>
@@ -394,7 +390,6 @@
 </div>
 
 <script>
-    // --- Element References ---
     const analysisForm = document.getElementById('analysisForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusBox = document.getElementById('statusBox');
@@ -402,14 +397,12 @@
     const resultWrapper = document.getElementById('resultWrapper');
     const resultText = document.getElementById('resultText');
 
-    // Camera Modal Elements
     const cameraModal = document.getElementById('cameraModal');
     const video = document.getElementById('video');
     const captureBtn = document.getElementById('captureBtn');
     const closeBtn = document.getElementById('closeBtn');
     const cameraOverlay = document.getElementById('cameraOverlay');
 
-    // --- State Management ---
     let currentStream;
     let currentPhotoType;
     const capturedPhotos = {
@@ -420,7 +413,6 @@
     };
     let pollingInterval;
 
-    // --- Core Camera Functions ---
     async function openCamera(photoType) {
         currentPhotoType = photoType;
         cameraModal.classList.remove('hidden');
@@ -485,7 +477,6 @@
         }
     }
 
-    // --- Event Listeners ---
     captureBtn.addEventListener('click', takePhoto);
     closeBtn.addEventListener('click', closeCamera);
 
@@ -519,7 +510,6 @@
         }
     });
 
-    // --- Polling and Result Functions ---
     function pollForResult(jobId) {
         pollingInterval = setInterval(async () => {
             try {

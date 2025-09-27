@@ -4,46 +4,39 @@ const path = require('path');
 const crypto = require('crypto');
 const cors = require('cors');
 
-
-
 const BUCKET_NAME = process.env.BUCKET_NAME;
 const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
 const GCP_PROJECT_ID = process.env.GCP_PROJECT_ID;
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080; // Note: Cloud Run uses 8080 by default
 
 const app = express();
 const storage = new Storage({ projectId: GCP_PROJECT_ID });
 
-
 const jobs = {};
 
-
 app.use(cors());
-app.use(express.json({ limit: '50mb' })); 
-app.use(express.text({ limit: '50mb' })); 
+app.use(express.json({ limit: '50mb' }));
+app.use(express.text({ limit: '50mb' }));
 
+// ✅ This line makes your 'assets' folder public
+app.use(express.static('assets'));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-
 app.post('/upload', async (req, res) => {
-    
     const { lips, tongue, eyes, nails } = req.body;
-    
     
     if (!lips || !tongue || !eyes || !nails) {
         return res.status(400).json({ message: 'Missing one or more images.' });
     }
 
-    
     const jobId = crypto.randomUUID();
     jobs[jobId] = { status: 'processing', result: null };
     console.log(`[${jobId}] New job created.`);
 
     try {
-        
         const [lipsUrl, tongueUrl, eyesUrl, nailsUrl] = await Promise.all([
             uploadImage(lips, `lips-${jobId}`),
             uploadImage(tongue, `tongue-${jobId}`),
@@ -52,21 +45,17 @@ app.post('/upload', async (req, res) => {
         ]);
         console.log(`[${jobId}] ⬆️ All images uploaded to GCS.`);
 
-        
         const host = req.get('host');
         const callbackUrl = `https://${host}/webhook-callback?jobId=${jobId}`;
         
-        
         const payload = { jobId, callbackUrl, lipsUrl, tongueUrl, eyesUrl, nailsUrl };
 
-        
         fetch(MAKE_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
         console.log(`[${jobId}] 🚀 Triggered Make.com webhook.`);
-
        
         res.status(202).json({ jobId: jobId });
 
@@ -76,7 +65,6 @@ app.post('/upload', async (req, res) => {
         res.status(500).json({ message: 'Error processing your request.' });
     }
 });
-
 
 app.post('/webhook-callback', (req, res) => {
     const { jobId } = req.query;
@@ -93,7 +81,6 @@ app.post('/webhook-callback', (req, res) => {
     }
 });
 
-
 app.get('/status/:jobId', (req, res) => {
     const { jobId } = req.params;
     const job = jobs[jobId];
@@ -104,7 +91,6 @@ app.get('/status/:jobId', (req, res) => {
     }
 });
 
-
 const uploadImage = async (base64, name) => {
     const fileName = `${name}.png`;
     const file = storage.bucket(BUCKET_NAME).file(fileName);
@@ -114,4 +100,4 @@ const uploadImage = async (base64, name) => {
     return signedUrl;
 };
 
-app.listen(PORT, () => console.log(`🚀 Server is running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`));

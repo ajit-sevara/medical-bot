@@ -206,6 +206,8 @@
         #video {
             width: 100%;
             border-radius: 8px;
+            /* ✅ ADDED FOR MIRRORING */
+            transform: scaleX(-1); 
         }
 
         #cameraOverlay {
@@ -254,7 +256,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 70%;
+            /* ✅ CHANGED WIDTH FROM 70% TO 40% */
+            width: 40%; 
             display: flex;
             justify-content: space-between;
         }
@@ -347,19 +350,19 @@
         <div class="capture-grid">
             <div class="capture-area" id="eyes-area">
                 <img id="eyes-preview" src="/eyes.png" alt="Eyes Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('eyes')">Capture Eyes</button>
+                <button type="button" class="capture-button" onclick="openCamera('eyes')">📸 Capture Eyes</button>
             </div>
             <div class="capture-area" id="lips-area">
                 <img id="lips-preview" src="/lips.png" alt="Lips Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('lips')">Capture Lips</button>
+                <button type="button" class="capture-button" onclick="openCamera('lips')">📸 Capture Lips</button>
             </div>
             <div class="capture-area" id="tongue-area">
                 <img id="tongue-preview" src="/tongue.png" alt="Tongue Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('tongue')">Capture Tongue</button>
+                <button type="button" class="capture-button" onclick="openCamera('tongue')">📸 Capture Tongue</button>
             </div>
             <div class="capture-area" id="nails-area">
                 <img id="nails-preview" src="/nail.png" alt="Nails Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('nails')">Capture Nails</button>
+                <button type="button" class="capture-button" onclick="openCamera('nails')">📸 Capture Nails</button>
             </div>
         </div>
         <button type="submit" id="submitBtn" class="analyze-button" disabled>Analyze Now</button>
@@ -451,6 +454,9 @@
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
+        // ✅ Apply the same mirroring transform to the canvas
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1);
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         
         const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];

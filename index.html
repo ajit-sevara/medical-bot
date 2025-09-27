@@ -239,7 +239,7 @@
             color: var(--text-color);
         }
 
-        /* --- NEW STYLES FOR OVERLAY GUIDES --- */
+        /* --- STYLES FOR OVERLAY GUIDES --- */
         .guide-container {
             position: absolute;
             top: 50%;
@@ -280,7 +280,7 @@
             width: 100px;
             height: 160px;
             border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 50% / 60%; /* Creates an oval that is taller than wide */
+            border-radius: 50% / 60%;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
         
@@ -288,10 +288,55 @@
             width: 180px;
             height: 120px;
             border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 20px; /* Rounded rectangle */
+            border-radius: 20px;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
+        /* --- ✅ MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .app-container {
+                padding: 1.5rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .capture-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .video-container {
+                width: auto;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .eye-circle {
+                width: 60px;
+                height: 60px;
+            }
+
+            .lips-guide svg {
+                width: 180px;
+            }
+            
+            .tongue-guide {
+                width: 80px;
+                height: 130px;
+            }
+            
+            .nails-guide {
+                width: 150px;
+                height: 100px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -380,11 +425,9 @@
         currentPhotoType = photoType;
         cameraModal.classList.remove('hidden');
 
-        // Dynamically set the overlay based on the photo type
         if (photoType === 'eyes') {
             cameraOverlay.innerHTML = `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>`;
         } else if (photoType === 'lips') {
-            // --- UPDATED LIPS SVG PATH HERE ---
             cameraOverlay.innerHTML = `<div class="guide-container lips-guide">
                 <svg width="220" height="100" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" stroke="rgba(255, 255, 255, 0.8)" stroke-width="3" fill="none"/>
@@ -452,8 +495,8 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Processing...';
         resultWrapper.classList.add('hidden');
-        statusText.textContent = 'Uploading images...';
         statusBox.classList.remove('hidden');
+        statusText.textContent = 'Uploading images...';
 
         try {
             const response = await fetch('/upload', {

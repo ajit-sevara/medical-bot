@@ -136,7 +136,6 @@
         }
         
         .capture-grid {
-            /* This is now just a container, not a grid */
             margin-bottom: 2rem;
         }
 
@@ -385,7 +384,6 @@
 </div>
 
 <script>
-    // --- Element References ---
     const analysisForm = document.getElementById('analysisForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusBox = document.getElementById('statusBox');
@@ -393,15 +391,12 @@
     const resultWrapper = document.getElementById('resultWrapper');
     const resultText = document.getElementById('resultText');
     const instructionText = document.getElementById('instructionText');
-
-    // Camera Modal Elements
     const cameraModal = document.getElementById('cameraModal');
     const video = document.getElementById('video');
     const captureBtn = document.getElementById('captureBtn');
     const closeBtn = document.getElementById('closeBtn');
     const cameraOverlay = document.getElementById('cameraOverlay');
 
-    // --- State Management for Sequential Capture ---
     const captureSequence = ['eyes', 'lips', 'tongue', 'nails'];
     let currentStep = 0;
     const capturedPhotos = {
@@ -411,47 +406,62 @@
         nails: null
     };
     let pollingInterval;
+    let currentStream;
 
-    // --- Core Functions ---
+    // --- UPDATED AND MORE ROBUST CAMERA LOGIC ---
 
-    // Initializes the UI for the first step
+    async function openCamera(photoType) {
+        // First, check for browser support
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert("Your browser does not support camera access. Please use a modern browser like Chrome or Firefox.");
+            return;
+        }
+
+        currentPhotoType = photoType;
+        
+        try {
+            // Request camera stream immediately
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            
+            // If successful, now show the modal and set up the UI
+            video.srcObject = stream;
+            currentStream = stream;
+            cameraModal.classList.remove('hidden');
+
+            // Set the correct overlay
+            if (photoType === 'eyes') {
+                cameraOverlay.innerHTML = `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>`;
+            } else if (photoType === 'lips') {
+                cameraOverlay.innerHTML = `<div class="guide-container lips-guide">
+                    <svg width="220" height="100" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" stroke="rgba(255, 255, 255, 0.8)" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>`;
+            } else if (photoType === 'tongue') {
+                cameraOverlay.innerHTML = `<div class="guide-container"><div class="tongue-guide"></div></div>`;
+            } else if (photoType === 'nails') {
+                cameraOverlay.innerHTML = `<div class="guide-container"><div class="nails-guide"></div></div>`;
+            } else {
+                cameraOverlay.innerHTML = '';
+            }
+
+        } catch (err) {
+            // This will give us a more detailed error in the console
+            console.error("Error accessing camera:", err);
+            
+            // Provide a more helpful alert
+            alert("Could not access the camera. Please check permissions and ensure you are on a secure (https) connection.");
+            closeCamera();
+        }
+    }
+
     function initCaptureUI() {
         const firstStep = captureSequence[currentStep];
         document.getElementById(`${firstStep}-area`).classList.remove('hidden');
         instructionText.textContent = `Step 1 of 4: Please capture a photo of your ${firstStep}.`;
-    }
-
-    async function openCamera(photoType) {
-        currentPhotoType = photoType;
-        cameraModal.classList.remove('hidden');
-
-        if (photoType === 'eyes') {
-            cameraOverlay.innerHTML = `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>`;
-        } else if (photoType === 'lips') {
-            cameraOverlay.innerHTML = `<div class="guide-container lips-guide">
-                <svg width="220" height="100" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" stroke="rgba(255, 255, 255, 0.8)" stroke-width="3" fill="none"/>
-                </svg>
-            </div>`;
-        } else if (photoType === 'tongue') {
-            cameraOverlay.innerHTML = `<div class="guide-container"><div class="tongue-guide"></div></div>`;
-        } else if (photoType === 'nails') {
-            cameraOverlay.innerHTML = `<div class="guide-container"><div class="nails-guide"></div></div>`;
-        } else {
-            cameraOverlay.innerHTML = '';
-        }
-
-        try {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
-            currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-            video.srcObject = currentStream;
-        } catch (err) {
-            console.error("Error accessing camera:", err);
-            alert("Could not access the camera. Please check permissions and ensure you are on a secure (https) connection.");
-            closeCamera();
-        }
     }
 
     function takePhoto() {
@@ -474,18 +484,14 @@
     }
 
     function advanceToNextStep() {
-        // Hide the current step
         document.getElementById(`${captureSequence[currentStep]}-area`).classList.add('hidden');
-        
-        currentStep++; // Move to the next step
+        currentStep++;
 
         if (currentStep < captureSequence.length) {
-            // Show the next capture area
             const nextPhotoType = captureSequence[currentStep];
             document.getElementById(`${nextPhotoType}-area`).classList.remove('hidden');
             instructionText.textContent = `Step ${currentStep + 1} of 4: Please capture a photo of your ${nextPhotoType}.`;
         } else {
-            // All photos are taken, show the final submit button
             instructionText.textContent = "All photos have been captured. Please click Analyze Now to proceed.";
             submitBtn.classList.remove('hidden');
         }
@@ -494,16 +500,15 @@
     function closeCamera() {
         if (currentStream) {
             currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
         }
         cameraModal.classList.add('hidden');
     }
 
-    // --- Event Listeners and Initializer ---
     captureBtn.addEventListener('click', takePhoto);
     closeBtn.addEventListener('click', closeCamera);
     analysisForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        
         submitBtn.disabled = true;
         submitBtn.textContent = 'Processing...';
         resultWrapper.classList.add('hidden');
@@ -531,11 +536,8 @@
         }
     });
     
-    // Start the process when the page loads
     document.addEventListener('DOMContentLoaded', initCaptureUI);
 
-
-    // --- Polling and Result Functions (Unchanged) ---
     function pollForResult(jobId) {
         pollingInterval = setInterval(async () => {
             try {
@@ -562,7 +564,7 @@
         resultWrapper.classList.remove('hidden');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Analyze Now';
-        submitBtn.classList.add('hidden'); // Hide after showing result to prevent re-submission
+        submitBtn.classList.add('hidden');
         instructionText.textContent = "Analysis complete. Here are your results.";
     }
 

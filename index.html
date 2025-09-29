@@ -136,9 +136,7 @@
         }
         
         .capture-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            /* This is now just a container, not a grid */
             margin-bottom: 2rem;
         }
 
@@ -206,7 +204,6 @@
         #video {
             width: 100%;
             border-radius: 8px;
-            /* ✅ ADDED FOR MIRRORING */
             transform: scaleX(-1); 
         }
 
@@ -256,7 +253,6 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            /* ✅ CHANGED WIDTH FROM 70% TO 40% */
             width: 40%; 
             display: flex;
             justify-content: space-between;
@@ -305,10 +301,6 @@
                 font-size: 1.5rem;
             }
 
-            .capture-grid {
-                grid-template-columns: 1fr;
-            }
-
             .video-container {
                 width: auto;
             }
@@ -343,29 +335,29 @@
 <main class="app-container">
     <header>
         <h1>Visual Health AI Analysis</h1>
-        <p>Capture live photos of your lips, tongue, eyes, and nails for an AI-powered assessment.</p>
+        <p id="instructionText">Capture live photos of your lips, tongue, eyes, and nails for an AI-powered assessment.</p>
     </header>
 
     <form id="analysisForm">
         <div class="capture-grid">
-            <div class="capture-area" id="eyes-area">
+            <div class="capture-area hidden" id="eyes-area">
                 <img id="eyes-preview" src="/eyes.png" alt="Eyes Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('eyes')">Capture Eyes</button>
+                <button type="button" class="capture-button" onclick="openCamera('eyes')">📸 Capture Eyes</button>
             </div>
-            <div class="capture-area" id="lips-area">
+            <div class="capture-area hidden" id="lips-area">
                 <img id="lips-preview" src="/lips.png" alt="Lips Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('lips')">Capture Lips</button>
+                <button type="button" class="capture-button" onclick="openCamera('lips')">📸 Capture Lips</button>
             </div>
-            <div class="capture-area" id="tongue-area">
+            <div class="capture-area hidden" id="tongue-area">
                 <img id="tongue-preview" src="/tongue.png" alt="Tongue Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('tongue')">Capture Tongue</button>
+                <button type="button" class="capture-button" onclick="openCamera('tongue')">📸 Capture Tongue</button>
             </div>
-            <div class="capture-area" id="nails-area">
+            <div class="capture-area hidden" id="nails-area">
                 <img id="nails-preview" src="/nail.png" alt="Nails Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('nails')">Capture Nails</button>
+                <button type="button" class="capture-button" onclick="openCamera('nails')">📸 Capture Nails</button>
             </div>
         </div>
-        <button type="submit" id="submitBtn" class="analyze-button" disabled>Analyze Now</button>
+        <button type="submit" id="submitBtn" class="analyze-button hidden">Analyze Now</button>
     </form>
     
     <div id="statusBox" class="status-box hidden">
@@ -393,21 +385,25 @@
 </div>
 
 <script>
+    // --- Element References ---
     const analysisForm = document.getElementById('analysisForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
     const resultWrapper = document.getElementById('resultWrapper');
     const resultText = document.getElementById('resultText');
+    const instructionText = document.getElementById('instructionText');
 
+    // Camera Modal Elements
     const cameraModal = document.getElementById('cameraModal');
     const video = document.getElementById('video');
     const captureBtn = document.getElementById('captureBtn');
     const closeBtn = document.getElementById('closeBtn');
     const cameraOverlay = document.getElementById('cameraOverlay');
 
-    let currentStream;
-    let currentPhotoType;
+    // --- State Management for Sequential Capture ---
+    const captureSequence = ['eyes', 'lips', 'tongue', 'nails'];
+    let currentStep = 0;
     const capturedPhotos = {
         eyes: null,
         lips: null,
@@ -415,6 +411,15 @@
         nails: null
     };
     let pollingInterval;
+
+    // --- Core Functions ---
+
+    // Initializes the UI for the first step
+    function initCaptureUI() {
+        const firstStep = captureSequence[currentStep];
+        document.getElementById(`${firstStep}-area`).classList.remove('hidden');
+        instructionText.textContent = `Step 1 of 4: Please capture a photo of your ${firstStep}.`;
+    }
 
     async function openCamera(photoType) {
         currentPhotoType = photoType;
@@ -454,7 +459,6 @@
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         const context = canvas.getContext('2d');
-        // ✅ Apply the same mirroring transform to the canvas
         context.translate(canvas.width, 0);
         context.scale(-1, 1);
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -465,8 +469,26 @@
         const previewElement = document.getElementById(`${currentPhotoType}-preview`);
         previewElement.src = `data:image/jpeg;base64,${base64Image}`;
         
-        checkAllPhotosTaken();
         closeCamera();
+        advanceToNextStep();
+    }
+
+    function advanceToNextStep() {
+        // Hide the current step
+        document.getElementById(`${captureSequence[currentStep]}-area`).classList.add('hidden');
+        
+        currentStep++; // Move to the next step
+
+        if (currentStep < captureSequence.length) {
+            // Show the next capture area
+            const nextPhotoType = captureSequence[currentStep];
+            document.getElementById(`${nextPhotoType}-area`).classList.remove('hidden');
+            instructionText.textContent = `Step ${currentStep + 1} of 4: Please capture a photo of your ${nextPhotoType}.`;
+        } else {
+            // All photos are taken, show the final submit button
+            instructionText.textContent = "All photos have been captured. Please click Analyze Now to proceed.";
+            submitBtn.classList.remove('hidden');
+        }
     }
 
     function closeCamera() {
@@ -476,16 +498,9 @@
         cameraModal.classList.add('hidden');
     }
 
-    function checkAllPhotosTaken() {
-        const allTaken = Object.values(capturedPhotos).every(photo => photo !== null);
-        if (allTaken) {
-            submitBtn.disabled = false;
-        }
-    }
-
+    // --- Event Listeners and Initializer ---
     captureBtn.addEventListener('click', takePhoto);
     closeBtn.addEventListener('click', closeCamera);
-
     analysisForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         
@@ -515,15 +530,18 @@
             handleError(`Upload failed: ${error.message}`);
         }
     });
+    
+    // Start the process when the page loads
+    document.addEventListener('DOMContentLoaded', initCaptureUI);
 
+
+    // --- Polling and Result Functions (Unchanged) ---
     function pollForResult(jobId) {
         pollingInterval = setInterval(async () => {
             try {
                 const res = await fetch(`/status/${jobId}`);
                 if (!res.ok) throw new Error(`Status check failed: ${res.status}`);
-                
                 const data = await res.json();
-
                 if (data.status === 'complete') {
                     clearInterval(pollingInterval);
                     displayResult(data.result);
@@ -544,6 +562,8 @@
         resultWrapper.classList.remove('hidden');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Analyze Now';
+        submitBtn.classList.add('hidden'); // Hide after showing result to prevent re-submission
+        instructionText.textContent = "Analysis complete. Here are your results.";
     }
 
     function handleError(message) {

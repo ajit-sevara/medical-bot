@@ -8,14 +8,14 @@
         :root {
             --primary-color: #3b82f6;
             --primary-hover: #2563eb;
-            --background-color: #f8fafc; /* This is the default page background */
+            --background-color: #f8fafc;
             --card-background: #ffffff;
             --text-color: #334155;
             --border-color: #e2e8f0;
             --success-bg: #f0fdf4;
             --success-border: #bbf7d0;
             --success-text: #166534;
-            --modal-bg: #ffffff; /* New: for modal background */
+            --modal-bg: #ffffff;
         }
 
         body {
@@ -39,6 +39,11 @@
             max-width: 650px;
             padding: 2.5rem;
             text-align: center;
+            /* Added for smooth transitions between views */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         header h1 {
@@ -72,26 +77,29 @@
         }
 
         .status-box, .result-wrapper {
-            margin-top: 2rem;
+            margin-top: 0; /* Removed margin to look better inside container */
             border-radius: 8px;
             padding: 1rem;
             text-align: left;
+            width: 100%; /* Make it fill the container */
         }
                 
         .status-box {
             display: flex;
+            flex-direction: column; /* Stack spinner and text */
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            background-color: #eef2ff;
-            color: #4338ca;
+            gap: 1rem;
+            background-color: transparent; /* Make it blend in */
+            color: var(--text-color);
             font-weight: 500;
+            font-size: 1.1rem;
         }
 
         .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #a5b4fc;
+            width: 40px; /* Larger spinner */
+            height: 40px;
+            border: 4px solid #a5b4fc;
             border-top-color: #4f46e5;
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -102,7 +110,6 @@
             border: 1px solid var(--success-border);
         }
         
-        /* Style for the new reset button */
         .result-wrapper button {
             margin-top: 1.5rem;
         }
@@ -113,6 +120,7 @@
             font-size: 1.2rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--success-border);
+            text-align: center;
         }
         
         #result-content {
@@ -131,55 +139,53 @@
             display: none !important;
         }
         
-        /* --- Styles for New Capture Screen --- */
         #captureScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--modal-bg); /* Changed to white */
+            background-color: var(--modal-bg);
             z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--text-color); /* Text color for the capture screen */
+            color: var(--text-color);
         }
 
         .capture-header {
             text-align: center;
-            margin-bottom: 1.5rem; /* Increased margin for better spacing */
+            margin-bottom: 1.5rem;
         }
 
         .capture-header img {
-            width: 80px; /* Slightly larger icons */
+            width: 80px;
             height: 80px;
             margin-bottom: 0.5rem;
         }
 
         .capture-header h2 {
             margin: 0;
-            font-size: 1.4rem; /* Slightly larger text */
+            font-size: 1.4rem;
             font-weight: 600;
         }
         
-        /* --- Enhanced video container styling --- */
         .video-container {
             position: relative;
             width: 500px;
             max-width: 90vw;
-            height: 375px; /* Fixed height for consistent aspect ratio (4:3) */
-            background-color: #000; /* Black background behind video */
+            height: 375px;
+            background-color: #000;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* More prominent shadow */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         #video {
             width: 100%;
-            height: 100%; /* Fill the container height */
-            object-fit: cover; /* Ensure video covers the area */
+            height: 100%;
+            object-fit: cover;
             display: block;
             transform: scaleX(-1); 
         }
@@ -191,12 +197,10 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            /* Added padding here to bring overlays slightly inward */
             padding: 10%; 
             box-sizing: border-box;
         }
 
-        /* Overlay Guides */
         .guide-container {
             position: absolute;
             top: 50%;
@@ -214,13 +218,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 50%; /* Adjusted width for better fit */
+            width: 50%;
             display: flex;
             justify-content: space-between;
         }
 
         .eye-circle {
-            width: 90px; /* Adjusted size */
+            width: 90px;
             height: 90px;
             border: 3px solid rgba(255, 255, 255, 0.8);
             border-radius: 50%;
@@ -228,16 +232,16 @@
         }
         
         .lips-guide svg {
-            width: 250px; /* Adjusted size */
+            width: 250px;
             height: auto;
             filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
-            stroke: rgba(255, 255, 255, 0.8); /* Ensured stroke color */
+            stroke: rgba(255, 255, 255, 0.8);
             stroke-width: 3;
             fill: none;
         }
         
         .tongue-guide {
-            width: 110px; /* Adjusted size */
+            width: 110px;
             height: 180px;
             border: 3px solid rgba(255, 255, 255, 0.8);
             border-radius: 50% / 60%;
@@ -245,13 +249,12 @@
         }
         
         .nails-guide {
-            width: 200px; /* Adjusted size */
+            width: 200px;
             height: 130px;
             border: 3px solid rgba(255, 255, 255, 0.8);
             border-radius: 20px;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
-
 
         .scan-line {
             position: absolute;
@@ -264,7 +267,7 @@
                 0 0 20px 6px rgba(0, 255, 255, 0.7),
                 0 0 35px 12px rgba(0, 255, 255, 0.3);
             border-radius: 3px;
-            animation: scanEffect 3s linear infinite; /* Always animating now */
+            animation: scanEffect 3s linear infinite;
         }
 
         @keyframes scanEffect {
@@ -283,7 +286,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Media queries for responsiveness */
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem;
@@ -308,7 +310,7 @@
 
             .video-container {
                 width: 95vw;
-                height: calc(95vw * 0.75); /* Maintain 4:3 aspect ratio */
+                height: calc(95vw * 0.75);
             }
 
             .eye-circle {
@@ -334,9 +336,9 @@
 </head>
 <body>
 
-<div id="appContainer">
+<div id="appContainer" class="app-container">
 
-    <div id="welcomeScreen" class="app-container">
+    <div id="welcomeView">
         <header>
             <h1>Visual Health Analysis in 4 easy steps</h1>
             <p>Our AI will guide you through capturing four photos for a visual health assessment.</p>
@@ -344,19 +346,17 @@
         <button id="startBtn" class="action-button">Start Now</button>
     </div>
 
-    <div id="mainAppScreen" class="app-container hidden">
-        <div id="statusBox" class="hidden">
-            <div class="spinner"></div>
-            <span id="statusText"></span>
+    <div id="statusBox" class="hidden">
+        <div class="spinner"></div>
+        <span id="statusText"></span>
+    </div>
+    
+    <div id="resultWrapper" class="hidden">
+        <h3>Analysis Result</h3>
+        <div id="result-content">
+            <pre id="resultText"></pre>
         </div>
-        
-        <div id="resultWrapper" class="hidden">
-            <h3>Analysis Result</h3>
-            <div id="result-content">
-                <pre id="resultText"></pre>
-            </div>
-            <button type="button" id="resetBtn" class="action-button">Start New Analysis</button>
-        </div>
+        <button type="button" id="resetBtn" class="action-button">Start New Analysis</button>
     </div>
 </div>
 
@@ -380,8 +380,7 @@
 <script>
     // --- Element References ---
     const appContainer = document.getElementById('appContainer');
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    const mainAppScreen = document.getElementById('mainAppScreen');
+    const welcomeView = document.getElementById('welcomeView');
     const startBtn = document.getElementById('startBtn');
 
     const captureScreen = document.getElementById('captureScreen');
@@ -399,30 +398,10 @@
     
     // --- State Management ---
     const captureSequence = [
-        { 
-            type: 'eyes', 
-            icon: '/eyes.png', 
-            overlayHtml: `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>` 
-        },
-        { 
-            type: 'lips', 
-            icon: '/lips.png', 
-            overlayHtml: `<div class="guide-container lips-guide">
-                <svg width="220" height="100" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" />
-                </svg>
-            </div>`
-        },
-        { 
-            type: 'tongue', 
-            icon: '/tongue.png', 
-            overlayHtml: `<div class="guide-container"><div class="tongue-guide"></div></div>` 
-        },
-        { 
-            type: 'nails', 
-            icon: '/nail.png', 
-            overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>` 
-        }
+        { type: 'eyes', icon: '/eyes.png', overlayHtml: `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>` },
+        { type: 'lips', icon: '/lips.png', overlayHtml: `<div class="guide-container lips-guide"><svg><path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" /></svg></div>` },
+        { type: 'tongue', icon: '/tongue.png', overlayHtml: `<div class="guide-container"><div class="tongue-guide"></div></div>` },
+        { type: 'nails', icon: '/nail.png', overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>` }
     ];
     let currentStep = 0;
     const capturedPhotos = {};
@@ -435,27 +414,18 @@
             alert("Your browser does not support camera access.");
             return;
         }
-
         try {
-            // Request camera stream
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-            
-            // If successful, switch screens and set up UI
             video.srcObject = stream;
             currentStream = stream;
             
-            welcomeScreen.classList.add('hidden');
-            mainAppScreen.classList.add('hidden');
+            appContainer.classList.add('hidden'); // Hide the main white box
             captureScreen.classList.remove('hidden');
-
             updateCaptureStepUI();
 
         } catch (err) {
             console.error("Error accessing camera:", err);
-            alert("Could not access the camera. Please check permissions and ensure you are on a secure (https) connection.");
+            alert("Could not access the camera. Please check permissions.");
         }
     }
 
@@ -463,8 +433,6 @@
         const step = captureSequence[currentStep];
         stepIcon.src = step.icon;
         stepIndicator.textContent = `${currentStep + 1} of ${captureSequence.length}`;
-
-        // Re-inject the scan line AND the specific overlay HTML
         cameraOverlay.innerHTML = `<div class="scan-line"></div>` + step.overlayHtml;
     }
 
@@ -478,31 +446,24 @@
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         
         const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];
-        const currentPhotoType = captureSequence[currentStep].type;
-        capturedPhotos[currentPhotoType] = base64Image;
+        capturedPhotos[captureSequence[currentStep].type] = base64Image;
         
-        // Move to the next step
         currentStep++;
-
         if (currentStep < captureSequence.length) {
-            // If there are more photos to take, just update the UI
             updateCaptureStepUI();
         } else {
-            // If all photos are taken, submit for analysis
-            console.log("All photos captured. Submitting...");
             submitAnalysis();
         }
     }
 
     async function submitAnalysis() {
-        // Hide capture screen and show main app with status
         captureScreen.classList.add('hidden');
-        mainAppScreen.classList.remove('hidden');
+        appContainer.classList.remove('hidden'); // Show the main white box again
+        welcomeView.classList.add('hidden'); // Keep welcome hidden
         statusBox.classList.remove('hidden');
         resultWrapper.classList.add('hidden');
         statusText.textContent = 'Uploading images...';
 
-        // Stop camera stream once analysis starts
         if (currentStream) {
             currentStream.getTracks().forEach(track => track.stop());
             currentStream = null;
@@ -514,16 +475,10 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(capturedPhotos)
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Server error: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`Server error: ${response.status}`);
             const { jobId } = await response.json();
             statusText.textContent = 'Analyzing images...';
             pollForResult(jobId);
-
         } catch (error) {
             handleError(`Upload failed: ${error.message}`);
         }
@@ -532,16 +487,11 @@
     function resetUI() {
         resultWrapper.classList.add('hidden');
         statusBox.classList.add('hidden');
-        mainAppScreen.classList.add('hidden');
-        welcomeScreen.classList.remove('hidden');
+        welcomeView.classList.remove('hidden'); // Show the welcome content
 
         currentStep = 0;
         for (const key in capturedPhotos) {
             delete capturedPhotos[key];
-        }
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-            currentStream = null;
         }
     }
     
@@ -578,6 +528,7 @@
     }
 
     function handleError(message) {
+        statusBox.classList.remove('hidden'); // Show status box on error
         statusText.textContent = `Error: ${message}`;
     }
 </script>

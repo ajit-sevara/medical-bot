@@ -8,13 +8,14 @@
         :root {
             --primary-color: #3b82f6;
             --primary-hover: #2563eb;
-            --background-color: #f8fafc;
+            --background-color: #f8fafc; /* This is the default page background */
             --card-background: #ffffff;
             --text-color: #334155;
             --border-color: #e2e8f0;
             --success-bg: #f0fdf4;
             --success-border: #bbf7d0;
             --success-text: #166534;
+            --modal-bg: #ffffff; /* New: for modal background */
         }
 
         body {
@@ -101,6 +102,7 @@
             border: 1px solid var(--success-border);
         }
         
+        /* Style for the new reset button */
         .result-wrapper button {
             margin-top: 1.5rem;
         }
@@ -136,43 +138,48 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: var(--modal-bg); /* Changed to white */
             z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--text-color); /* Text color for the capture screen */
         }
 
         .capture-header {
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem; /* Increased margin for better spacing */
         }
 
         .capture-header img {
-            width: 60px;
-            height: 60px;
+            width: 80px; /* Slightly larger icons */
+            height: 80px;
             margin-bottom: 0.5rem;
         }
 
         .capture-header h2 {
             margin: 0;
-            font-size: 1.2rem;
-            font-weight: 500;
+            font-size: 1.4rem; /* Slightly larger text */
+            font-weight: 600;
         }
         
+        /* --- Enhanced video container styling --- */
         .video-container {
             position: relative;
             width: 500px;
             max-width: 90vw;
+            height: 375px; /* Fixed height for consistent aspect ratio (4:3) */
+            background-color: #000; /* Black background behind video */
             border-radius: 16px;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); /* More prominent shadow */
         }
 
         #video {
             width: 100%;
+            height: 100%; /* Fill the container height */
+            object-fit: cover; /* Ensure video covers the area */
             display: block;
             transform: scaleX(-1); 
         }
@@ -184,7 +191,67 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            /* Added padding here to bring overlays slightly inward */
+            padding: 10%; 
+            box-sizing: border-box;
         }
+
+        /* Overlay Guides */
+        .guide-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .eye-guides {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%; /* Adjusted width for better fit */
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .eye-circle {
+            width: 90px; /* Adjusted size */
+            height: 90px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        
+        .lips-guide svg {
+            width: 250px; /* Adjusted size */
+            height: auto;
+            filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+            stroke: rgba(255, 255, 255, 0.8); /* Ensured stroke color */
+            stroke-width: 3;
+            fill: none;
+        }
+        
+        .tongue-guide {
+            width: 110px; /* Adjusted size */
+            height: 180px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50% / 60%;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        
+        .nails-guide {
+            width: 200px; /* Adjusted size */
+            height: 130px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
 
         .scan-line {
             position: absolute;
@@ -197,7 +264,7 @@
                 0 0 20px 6px rgba(0, 255, 255, 0.7),
                 0 0 35px 12px rgba(0, 255, 255, 0.3);
             border-radius: 3px;
-            animation: scanEffect 3s linear infinite;
+            animation: scanEffect 3s linear infinite; /* Always animating now */
         }
 
         @keyframes scanEffect {
@@ -214,6 +281,54 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .app-container {
+                padding: 1.5rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .capture-header img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .capture-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .video-container {
+                width: 95vw;
+                height: calc(95vw * 0.75); /* Maintain 4:3 aspect ratio */
+            }
+
+            .eye-circle {
+                width: 70px;
+                height: 70px;
+            }
+
+            .lips-guide svg {
+                width: 200px;
+            }
+            
+            .tongue-guide {
+                width: 90px;
+                height: 150px;
+            }
+            
+            .nails-guide {
+                width: 160px;
+                height: 110px;
+            }
         }
     </style>
 </head>
@@ -255,7 +370,7 @@
     <div class="video-container">
         <video id="video" autoplay playsinline></video>
         <div id="cameraOverlay">
-            <div class="scan-line"></div>
+            <div class="scan-line"></div> 
         </div> 
     </div>
     <button id="captureBtn" class="action-button">Capture Photo</button>
@@ -284,10 +399,30 @@
     
     // --- State Management ---
     const captureSequence = [
-        { type: 'eyes', icon: '/eyes.png' },
-        { type: 'lips', icon: '/lips.png' },
-        { type: 'tongue', icon: '/tongue.png' },
-        { type: 'nails', icon: '/nail.png' }
+        { 
+            type: 'eyes', 
+            icon: '/eyes.png', 
+            overlayHtml: `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>` 
+        },
+        { 
+            type: 'lips', 
+            icon: '/lips.png', 
+            overlayHtml: `<div class="guide-container lips-guide">
+                <svg width="220" height="100" viewBox="0 0 220 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" />
+                </svg>
+            </div>`
+        },
+        { 
+            type: 'tongue', 
+            icon: '/tongue.png', 
+            overlayHtml: `<div class="guide-container"><div class="tongue-guide"></div></div>` 
+        },
+        { 
+            type: 'nails', 
+            icon: '/nail.png', 
+            overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>` 
+        }
     ];
     let currentStep = 0;
     const capturedPhotos = {};
@@ -327,7 +462,10 @@
     function updateCaptureStepUI() {
         const step = captureSequence[currentStep];
         stepIcon.src = step.icon;
-        stepIndicator.textContent = `${currentStep + 1} of 4`;
+        stepIndicator.textContent = `${currentStep + 1} of ${captureSequence.length}`;
+
+        // Re-inject the scan line AND the specific overlay HTML
+        cameraOverlay.innerHTML = `<div class="scan-line"></div>` + step.overlayHtml;
     }
 
     function takePhoto() {
@@ -364,6 +502,12 @@
         resultWrapper.classList.add('hidden');
         statusText.textContent = 'Uploading images...';
 
+        // Stop camera stream once analysis starts
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+        }
+
         try {
             const response = await fetch('/upload', {
                 method: 'POST',
@@ -371,7 +515,10 @@
                 body: JSON.stringify(capturedPhotos)
             });
 
-            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Server error: ${response.status}`);
+            }
 
             const { jobId } = await response.json();
             statusText.textContent = 'Analyzing images...';

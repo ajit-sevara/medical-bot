@@ -43,7 +43,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: all 0.3s ease-in-out; /* Smooth transitions */
+            transition: all 0.3s ease-in-out;
         }
 
         header h1 {
@@ -76,11 +76,10 @@
             background-color: var(--primary-hover);
         }
 
-        /* --- ✨ Redesigned Status and Result Views --- */
         .status-box, .result-wrapper {
             margin-top: 0;
             padding: 1rem;
-            text-align: center; /* Center text inside */
+            text-align: center;
             width: 100%;
         }
                 
@@ -98,17 +97,17 @@
         .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #dbeafe; /* Lighter blue */
-            border-top-color: var(--primary-color); /* Primary blue */
+            border: 4px solid #dbeafe;
+            border-top-color: var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         
         .result-wrapper {
-            background-color: var(--card-background); /* Use main card background */
-            border: 1px solid var(--border-color); /* Subtle border */
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            text-align: left; /* Keep text left-aligned inside */
+            text-align: left;
         }
         
         .result-wrapper button {
@@ -127,8 +126,7 @@
         #result-content {
             max-height: 300px;
             overflow-y: auto;
-            padding-right: 0.5rem;
-            color: var(--text-color);
+            text-align: left;
         }
 
         #result-text {
@@ -137,7 +135,6 @@
             font-size: 0.95rem;
             line-height: 1.6;
         }
-        /* --- End of Redesigned Styles --- */
 
         .hidden {
             display: none !important;
@@ -308,7 +305,7 @@
             <div class="scan-line"></div> 
         </div> 
     </div>
-    <button id="captureBtn" class="action-button">Capture Photo</button>
+    <button id="captureBtn" class="action-button">Submit & Next</button>
 </div>
 
 <script>
@@ -356,11 +353,19 @@
         }
     }
 
+    // --- ✨ UPDATED FUNCTION ---
     function updateCaptureStepUI() {
         const step = captureSequence[currentStep];
         stepIcon.src = step.icon;
         stepIndicator.textContent = `${currentStep + 1} of ${captureSequence.length}`;
         cameraOverlay.innerHTML = `<div class="scan-line"></div>` + step.overlayHtml;
+
+        // Check if it's the last step and update button text
+        if (currentStep === captureSequence.length - 1) {
+            captureBtn.textContent = 'Get my Analysis';
+        } else {
+            captureBtn.textContent = 'Submit & Next';
+        }
     }
 
     function takePhoto() {

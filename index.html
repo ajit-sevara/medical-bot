@@ -287,6 +287,42 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
+        /* --- ✨ NEW STYLES FOR SCAN EFFECT --- */
+        #snapshotContainer {
+            position: relative;
+            width: 500px;
+            max-width: 100%;
+            overflow: hidden; /* Important to contain the scan line */
+            border-radius: 8px;
+        }
+
+        #snapshotImage {
+            width: 100%;
+            display: block;
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, rgba(167, 243, 208, 0.8), transparent);
+            box-shadow: 0 0 10px 2px #34d399;
+            display: none; /* Hidden by default */
+        }
+        
+        #snapshotContainer.scanning .scan-line {
+            display: block;
+            animation: scanEffect 2.5s ease-in-out;
+        }
+
+        @keyframes scanEffect {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem;
@@ -300,7 +336,7 @@
                 font-size: 1.5rem;
             }
 
-            .video-container {
+            .video-container, #snapshotContainer {
                 width: auto;
             }
 
@@ -374,12 +410,18 @@
 
 <div id="cameraModal" class="modal hidden">
     <div class="modal-content">
-        <div class="video-container">
-            <video id="video" autoplay playsinline></video>
-            <div id="cameraOverlay"></div> 
+        <div id="liveViewContainer">
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <div id="cameraOverlay"></div> 
+            </div>
+            <button id="captureBtn" class="modal-capture-button">Capture Photo</button>
+            <button id="closeBtn" class="modal-close-button">Close</button>
         </div>
-        <button id="captureBtn" class="modal-capture-button">Capture Photo</button>
-        <button id="closeBtn" class="modal-close-button">Close</button>
+        <div id="snapshotContainer" class="hidden">
+            <img id="snapshotImage" src="" alt="Captured photo">
+            <div class="scan-line"></div>
+        </div>
     </div>
 </div>
 
@@ -396,6 +438,11 @@
     const captureBtn = document.getElementById('captureBtn');
     const closeBtn = document.getElementById('closeBtn');
     const cameraOverlay = document.getElementById('cameraOverlay');
+    
+    // ✨ NEW Element References for the effect
+    const liveViewContainer = document.getElementById('liveViewContainer');
+    const snapshotContainer = document.getElementById('snapshotContainer');
+    const snapshotImage = document.getElementById('snapshotImage');
 
     const captureSequence = ['eyes', 'lips', 'tongue', 'nails'];
     let currentStep = 0;
@@ -408,30 +455,23 @@
     let pollingInterval;
     let currentStream;
 
-    // --- UPDATED AND MORE ROBUST CAMERA LOGIC ---
-
     async function openCamera(photoType) {
-        // First, check for browser support
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            alert("Your browser does not support camera access. Please use a modern browser like Chrome or Firefox.");
+            alert("Your browser does not support camera access.");
             return;
         }
-
         currentPhotoType = photoType;
         
         try {
-            // Request camera stream immediately
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
             }
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
             
-            // If successful, now show the modal and set up the UI
             video.srcObject = stream;
             currentStream = stream;
             cameraModal.classList.remove('hidden');
 
-            // Set the correct overlay
             if (photoType === 'eyes') {
                 cameraOverlay.innerHTML = `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>`;
             } else if (photoType === 'lips') {
@@ -447,23 +487,14 @@
             } else {
                 cameraOverlay.innerHTML = '';
             }
-
         } catch (err) {
-            // This will give us a more detailed error in the console
             console.error("Error accessing camera:", err);
-            
-            // Provide a more helpful alert
             alert("Could not access the camera. Please check permissions and ensure you are on a secure (https) connection.");
             closeCamera();
         }
     }
 
-    function initCaptureUI() {
-        const firstStep = captureSequence[currentStep];
-        document.getElementById(`${firstStep}-area`).classList.remove('hidden');
-        instructionText.textContent = `Step 1 of 4: Please capture a photo of your ${firstStep}.`;
-    }
-
+    // --- ✨ REWRITTEN takePhoto function to orchestrate the effect ---
     function takePhoto() {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
@@ -473,14 +504,42 @@
         context.scale(-1, 1);
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         
-        const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        const base64Image = dataUrl.split(',')[1];
         capturedPhotos[currentPhotoType] = base64Image;
         
-        const previewElement = document.getElementById(`${currentPhotoType}-preview`);
-        previewElement.src = `data:image/jpeg;base64,${base64Image}`;
+        // --- Start the Visual Effect ---
+        // 1. Hide the live view and its buttons
+        liveViewContainer.classList.add('hidden');
+
+        // 2. Show the snapshot container and set the image
+        snapshotImage.src = dataUrl;
+        snapshotContainer.classList.remove('hidden');
         
-        closeCamera();
-        advanceToNextStep();
+        // 3. Add the 'scanning' class to trigger the CSS animation
+        snapshotContainer.classList.add('scanning');
+
+        // 4. Wait for the animation to finish, then proceed
+        setTimeout(() => {
+            // Cleanup the effect
+            snapshotContainer.classList.add('hidden');
+            snapshotContainer.classList.remove('scanning');
+            liveViewContainer.classList.remove('hidden'); // Reset for next use
+
+            // Update the main page preview icon
+            const previewElement = document.getElementById(`${currentPhotoType}-preview`);
+            previewElement.src = dataUrl;
+            
+            // Close the modal and move to the next step
+            closeCamera();
+            advanceToNextStep();
+        }, 2500); // 2.5 seconds for the effect
+    }
+
+    function initCaptureUI() {
+        const firstStep = captureSequence[currentStep];
+        document.getElementById(`${firstStep}-area`).classList.remove('hidden');
+        instructionText.textContent = `Step 1 of 4: Please capture a photo of your ${firstStep}.`;
     }
 
     function advanceToNextStep() {

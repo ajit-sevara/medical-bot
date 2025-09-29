@@ -5,365 +5,368 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visual Health AI Analysis</title>
     <style>
-        :root {
-            --primary-color: #3b82f6;
-            --primary-hover: #2563eb;
-            --background-color: #f8fafc;
-            --card-background: #ffffff;
-            --text-color: #334155;
-            --border-color: #e2e8f0;
-            --success-bg: #f0fdf4;
-            --success-border: #bbf7d0;
-            --success-text: #166534;
-        }
+    :root {
+        --primary-color: #3b82f6;
+        --primary-hover: #2563eb;
+        --background-color: #f8fafc;
+        --card-background: #ffffff;
+        --text-color: #334155;
+        --border-color: #e2e8f0;
+        --success-bg: #f0fdf4;
+        --success-border: #bbf7d0;
+        --success-text: #166534;
+    }
 
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+
+    .app-container {
+        background-color: var(--card-background);
+        border-radius: 16px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        width: 100%;
+        max-width: 650px;
+        padding: 2.5rem;
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    header p {
+        color: #64748b;
+        margin-bottom: 2rem;
+    }
+    
+    .analyze-button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.2s;
+    }
+
+    .analyze-button:hover {
+        background-color: var(--primary-hover);
+    }
+
+    .analyze-button:disabled {
+        background-color: #93c5fd;
+        cursor: not-allowed;
+    }
+    
+    .status-box, .result-wrapper {
+        margin-top: 2rem;
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: left;
+    }
+            
+    .status-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        background-color: #eef2ff;
+        color: #4338ca;
+        font-weight: 500;
+    }
+
+    .spinner {
+        width: 20px;
+        height: 20px;
+        border: 3px solid #a5b4fc;
+        border-top-color: #4f46e5;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    .result-wrapper {
+        background-color: var(--success-bg);
+        border: 1px solid var(--success-border);
+    }
+
+    .result-wrapper h3 {
+        margin: 0 0 1rem 0;
+        color: var(--success-text);
+        font-size: 1.2rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--success-border);
+    }
+    
+    #result-content {
+        max-height: 400px;
+        overflow-y: auto; 
+        padding-right: 0.5rem; 
+        color: #155e2b;
+    }
+
+    #result-text {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+    
+    .capture-grid {
+        margin-bottom: 2rem;
+    }
+
+    .capture-area {
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: #f1f5f9;
+        margin-bottom: 1rem;
+        border: 2px solid var(--border-color);
+    }
+
+    .capture-button {
+        background-color: #4f46e5;
+        color: white;
+        border: none;
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+    }
+    .capture-button:hover {
+        background-color: #4338ca;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: grid;
+        place-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        text-align: center;
+        max-width: 90%;
+    }
+
+    .video-container {
+        position: relative;
+        width: 500px;
+        max-width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    #video {
+        width: 100%;
+        border-radius: 8px;
+        transform: scaleX(-1); 
+    }
+
+    #cameraOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+
+    .modal-capture-button, .modal-close-button {
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin: 0 0.5rem;
+    }
+
+    .modal-capture-button {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .modal-close-button {
+        background-color: #e2e8f0;
+        color: var(--text-color);
+    }
+
+    .guide-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .eye-guides {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40%; 
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .eye-circle {
+        width: 80px;
+        height: 80px;
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    
+    .lips-guide svg {
+        width: 220px;
+        height: auto;
+        filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+    }
+    
+    .tongue-guide {
+        width: 100px;
+        height: 160px;
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        border-radius: 50% / 60%;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    
+    .nails-guide {
+        width: 180px;
+        height: 120px;
+        border: 3px solid rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    /* --- ✨ UPDATED STYLES FOR SCAN EFFECT --- */
+    #snapshotContainer {
+        position: relative;
+        width: 500px;
+        max-width: 100%;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    #snapshotImage {
+        width: 100%;
+        display: block;
+    }
+
+    .scan-line {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: #00ffff; /* A solid, bright cyan color for the core line */
+        box-shadow: 
+            0 0 10px 2px #00ffff, /* Main cyan glow */
+            0 0 20px 6px rgba(0, 255, 255, 0.7), /* Wider, softer cyan glow */
+            0 0 35px 12px rgba(0, 255, 255, 0.3); /* Faintest outer glow */
+        border-radius: 3px;
+        display: none;
+    }
+    
+    #snapshotContainer.scanning .scan-line {
+        display: block;
+        animation: scanEffect 2.5s ease-in-out;
+    }
+
+    @keyframes scanEffect {
+        0% { top: -10%; } /* Start slightly off-screen */
+        50% { top: 100%; } /* Move to the bottom */
+        100% { top: -10%; } /* Return to the top */
+    }
+
+    @media (max-width: 768px) {
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            display: grid;
-            place-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1rem;
-            box-sizing: border-box;
+            padding: 0.5rem;
         }
 
         .app-container {
-            background-color: var(--card-background);
-            border-radius: 16px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            width: 100%;
-            max-width: 650px;
-            padding: 2.5rem;
-            text-align: center;
+            padding: 1.5rem;
         }
 
         header h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
         }
 
-        header p {
-            color: #64748b;
-            margin-bottom: 2rem;
-        }
-        
-        .analyze-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
-        }
-
-        .analyze-button:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .analyze-button:disabled {
-            background-color: #93c5fd;
-            cursor: not-allowed;
-        }
-        
-        .status-box, .result-wrapper {
-            margin-top: 2rem;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: left;
-        }
-                
-        .status-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            background-color: #eef2ff;
-            color: #4338ca;
-            font-weight: 500;
-        }
-
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #a5b4fc;
-            border-top-color: #4f46e5;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        .result-wrapper {
-            background-color: var(--success-bg);
-            border: 1px solid var(--success-border);
-        }
-
-        .result-wrapper h3 {
-            margin: 0 0 1rem 0;
-            color: var(--success-text);
-            font-size: 1.2rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--success-border);
-        }
-        
-        #result-content {
-            max-height: 400px;
-            overflow-y: auto; 
-            padding-right: 0.5rem; 
-            color: #155e2b;
-        }
-
-        #result-text {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-        
-        .capture-grid {
-            margin-bottom: 2rem;
-        }
-
-        .capture-area {
-            border: 2px dashed var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .preview-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: #f1f5f9;
-            margin-bottom: 1rem;
-            border: 2px solid var(--border-color);
-        }
-
-        .capture-button {
-            background-color: #4f46e5;
-            color: white;
-            border: none;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        .capture-button:hover {
-            background-color: #4338ca;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: grid;
-            place-items: center;
-            z-index: 1000;
+        .video-container, #snapshotContainer {
+            width: auto;
         }
 
         .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            text-align: center;
-            max-width: 90%;
-        }
-
-        .video-container {
-            position: relative;
-            width: 500px;
-            max-width: 100%;
-            margin-bottom: 1rem;
-        }
-
-        #video {
-            width: 100%;
-            border-radius: 8px;
-            transform: scaleX(-1); 
-        }
-
-        #cameraOverlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .modal-capture-button, .modal-close-button {
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 0 0.5rem;
-        }
-
-        .modal-capture-button {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .modal-close-button {
-            background-color: #e2e8f0;
-            color: var(--text-color);
-        }
-
-        .guide-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .eye-guides {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40%; 
-            display: flex;
-            justify-content: space-between;
+            padding: 1.5rem;
         }
 
         .eye-circle {
-            width: 80px;
-            height: 80px;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            width: 60px;
+            height: 60px;
         }
-        
+
         .lips-guide svg {
-            width: 220px;
-            height: auto;
-            filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+            width: 180px;
         }
         
         .tongue-guide {
-            width: 100px;
-            height: 160px;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 50% / 60%;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            width: 80px;
+            height: 130px;
         }
         
         .nails-guide {
-            width: 180px;
-            height: 120px;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            width: 150px;
+            height: 100px;
         }
-
-        /* --- ✨ NEW STYLES FOR SCAN EFFECT --- */
-        #snapshotContainer {
-            position: relative;
-            width: 500px;
-            max-width: 100%;
-            overflow: hidden; /* Important to contain the scan line */
-            border-radius: 8px;
-        }
-
-        #snapshotImage {
-            width: 100%;
-            display: block;
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, rgba(167, 243, 208, 0.8), transparent);
-            box-shadow: 0 0 10px 2px #34d399;
-            display: none; /* Hidden by default */
-        }
-        
-        #snapshotContainer.scanning .scan-line {
-            display: block;
-            animation: scanEffect 2.5s ease-in-out;
-        }
-
-        @keyframes scanEffect {
-            0% { top: 0%; }
-            50% { top: 100%; }
-            100% { top: 0%; }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 0.5rem;
-            }
-
-            .app-container {
-                padding: 1.5rem;
-            }
-
-            header h1 {
-                font-size: 1.5rem;
-            }
-
-            .video-container, #snapshotContainer {
-                width: auto;
-            }
-
-            .modal-content {
-                padding: 1.5rem;
-            }
-
-            .eye-circle {
-                width: 60px;
-                height: 60px;
-            }
-
-            .lips-guide svg {
-                width: 180px;
-            }
-            
-            .tongue-guide {
-                width: 80px;
-                height: 130px;
-            }
-            
-            .nails-guide {
-                width: 150px;
-                height: 100px;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
 
@@ -377,19 +380,19 @@
         <div class="capture-grid">
             <div class="capture-area hidden" id="eyes-area">
                 <img id="eyes-preview" src="/eyes.png" alt="Eyes Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('eyes')">📸 Capture Eyes</button>
+                <button type="button" class="capture-button" onclick="openCamera('eyes')">Capture Eyes</button>
             </div>
             <div class="capture-area hidden" id="lips-area">
                 <img id="lips-preview" src="/lips.png" alt="Lips Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('lips')">📸 Capture Lips</button>
+                <button type="button" class="capture-button" onclick="openCamera('lips')">Capture Lips</button>
             </div>
             <div class="capture-area hidden" id="tongue-area">
                 <img id="tongue-preview" src="/tongue.png" alt="Tongue Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('tongue')">📸 Capture Tongue</button>
+                <button type="button" class="capture-button" onclick="openCamera('tongue')">Capture Tongue</button>
             </div>
             <div class="capture-area hidden" id="nails-area">
                 <img id="nails-preview" src="/nail.png" alt="Nails Preview" class="preview-image">
-                <button type="button" class="capture-button" onclick="openCamera('nails')">📸 Capture Nails</button>
+                <button type="button" class="capture-button" onclick="openCamera('nails')">Capture Nails</button>
             </div>
         </div>
         <button type="submit" id="submitBtn" class="analyze-button hidden">Analyze Now</button>
@@ -415,7 +418,7 @@
                 <video id="video" autoplay playsinline></video>
                 <div id="cameraOverlay"></div> 
             </div>
-            <button id="captureBtn" class="modal-capture-button">Capture Photo</button>
+            <button id="captureBtn" class="modal-capture-button">Submit</button>
             <button id="closeBtn" class="modal-close-button">Close</button>
         </div>
         <div id="snapshotContainer" class="hidden">

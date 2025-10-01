@@ -103,11 +103,14 @@
             animation: spin 1s linear infinite;
         }
         
+        /* --- ✨ UPDATED RESULT BOX STYLES --- */
         .result-wrapper {
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             text-align: left;
+            padding: 2rem; /* Increased padding */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
         
         .result-wrapper button {
@@ -124,18 +127,36 @@
         }
         
         #result-content {
-            max-height: 300px;
+            max-height: 350px; /* Increased height */
             overflow-y: auto;
             text-align: left;
+            padding-right: 1rem; /* Space for scrollbar */
+        }
+
+        /* Modern scrollbar for Webkit browsers */
+        #result-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        #result-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #result-content::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        #result-content::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
         }
 
         #result-text {
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            white-space: pre-wrap;   /* Keeps formatting but wraps text */
+            overflow-wrap: break-word; /* Prevents horizontal scroll */
             font-size: 0.95rem;
             line-height: 1.6;
             text-align: left;
         }
+        /* --- End of Updated Styles --- */
 
         .hidden {
             display: none !important;
@@ -253,8 +274,8 @@
         }
 
         .face-oval-guide {
-            width: 57%;
-            height: 88%;
+            width: 54%;
+            height: 92%;
             border: 3px dashed var(--primary-color);
             border-radius: 50%;
             box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7);
@@ -282,8 +303,7 @@
         .lips-guide svg { width: 180px; height: auto; stroke: rgba(255, 255, 255, 0.8); stroke-width: 3; fill: none; border: none; box-shadow: none; }
         .tongue-guide { width: 90px; height: 140px; border-radius: 50% / 60%; }
         .nails-guide { width: 250px; height: 180px; border-radius: 20px; }
-
-        /* --- ✨ UPDATED SCAN ANIMATION --- */
+        
         #scanAnimation {
             position: absolute;
             top: 0;
@@ -305,7 +325,7 @@
                 0 0 20px 6px rgba(0, 255, 255, 0.7),
                 0 0 35px 12px rgba(0, 255, 255, 0.3);
             border-radius: 3px;
-            animation: scanEffect 2s ease-in-out; /* The animation runs for 2 seconds */
+            animation: scanEffect 1s ease-in-out;
         }
 
         @keyframes scanEffect {
@@ -476,7 +496,7 @@
         backBtn.disabled = true;
         scanAnimation.classList.remove('hidden');
 
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 4000));
 
         scanAnimation.classList.add('hidden');
         captureBtn.disabled = false;

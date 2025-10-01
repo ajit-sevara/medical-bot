@@ -158,7 +158,6 @@
             color: var(--text-color);
         }
 
-        /* --- New styles for Back button and button container --- */
         .capture-buttons {
             display: flex;
             gap: 1rem;
@@ -167,7 +166,7 @@
         }
 
         #backBtn {
-            flex: 1; /* Allow back button to take equal space */
+            flex: 1;
             background-color: #e2e8f0;
             color: var(--text-color);
             border: none;
@@ -184,8 +183,8 @@
         }
         
         #captureBtn {
-            flex: 2; /* Main button takes more space */
-            margin-top: 0; /* Already in flex container */
+            flex: 2;
+            margin-top: 0;
         }
 
         .capture-main {
@@ -254,8 +253,8 @@
         }
 
         .face-oval-guide {
-            width: 47%;
-            height: 78%;
+            width: 57%;
+            height: 88%;
             border: 3px dashed var(--primary-color);
             border-radius: 50%;
             box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7);
@@ -284,31 +283,25 @@
         .tongue-guide { width: 90px; height: 140px; border-radius: 50% / 60%; }
         .nails-guide { width: 250px; height: 180px; border-radius: 20px; }
 
-        /* --- New Scan Animation styles --- */
-        #scanAnimation {
+        /* --- New Scan Line Animation styles --- */
+        #scanLine {
             position: absolute;
-            top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
-            z-index: 10;
+            height: 8px; /* Thicker scan line */
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.8), transparent);
+            box-shadow: 
+                0 0 15px 5px rgba(0, 255, 255, 0.7),
+                0 0 30px 10px rgba(0, 255, 255, 0.5);
+            border-radius: 4px;
+            animation: scanEffect 2s ease-in-out infinite alternate; /* 2-second animation, alternates direction */
+            display: none; /* Hidden by default */
         }
-        .scan-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: #00ffff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
+
+        @keyframes scanEffect {
+            0% { top: 0%; opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { top: calc(100% - 8px); opacity: 0.5; } /* Adjust for height of scan line */
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -325,7 +318,7 @@
                 flex-direction: column;
             }
             #backBtn, #captureBtn {
-                flex: none; /* Remove flex sizing on small screens */
+                flex: none;
             }
         }
         @media (max-width: 768px) {
@@ -361,11 +354,8 @@
     <div class="capture-main">
         <div class="video-container">
             <video id="video" autoplay playsinline></video>
-            <div id="cameraOverlay"></div> 
-            <div id="scanAnimation" class="hidden">
-                <div class="scan-spinner"></div>
-                <span>Scanning...</span>
-            </div>
+            <div id="cameraOverlay">
+                <div id="scanLine" class="hidden"></div> </div> 
         </div>
     </div>
     <div class="instruction-panel">
@@ -393,8 +383,8 @@
     const stepInstructions = document.getElementById('stepInstructions');
     const video = document.getElementById('video');
     const cameraOverlay = document.getElementById('cameraOverlay');
+    const scanLine = document.getElementById('scanLine'); // New reference for scan line
     const captureBtn = document.getElementById('captureBtn');
-    const scanAnimation = document.getElementById('scanAnimation'); // New
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
     const resultWrapper = document.getElementById('resultWrapper');
@@ -439,8 +429,8 @@
             currentStream = stream;
             appContainer.classList.add('hidden');
             captureScreen.classList.remove('hidden');
-            currentStep = 0; // Ensure we start from the first step
-            capturedPhotos = {}; // Clear any previous photos
+            currentStep = 0; 
+            capturedPhotos = {}; 
             updateCaptureStepUI();
         } catch (err) {
             console.error("Error accessing camera:", err);
@@ -454,7 +444,15 @@
         stepTitle.textContent = step.title;
         stepSubtitle.textContent = step.subtitle;
         stepInstructions.innerHTML = step.instructions;
-        cameraOverlay.innerHTML = step.overlayHtml;
+        
+        // Clear previous overlays, then add the new ones
+        cameraOverlay.innerHTML = ''; 
+        
+        // For non-nail steps, we need the face oval guide first
+        if (step.type !== 'nails') {
+            cameraOverlay.innerHTML += `<div class="face-oval-guide"></div>`;
+        }
+        cameraOverlay.innerHTML += step.overlayHtml; // Add specific guides
 
         if (currentStep === captureSequence.length - 1) {
             captureBtn.textContent = 'Get my Analysis';
@@ -462,7 +460,6 @@
             captureBtn.textContent = 'Scan and Next';
         }
 
-        // Show/hide back button
         if (currentStep > 0) {
             backBtn.classList.remove('hidden');
         } else {
@@ -471,17 +468,20 @@
     }
 
     async function handleCaptureButtonClick() {
-        captureBtn.disabled = true; // Disable button during scan
+        captureBtn.disabled = true; 
         backBtn.disabled = true;
-        scanAnimation.classList.remove('hidden'); // Show scanning animation
-
+        
+        // Show scan line and start animation
+        scanLine.classList.remove('hidden');
+        
         await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds
 
-        scanAnimation.classList.add('hidden'); // Hide scanning animation
-        captureBtn.disabled = false; // Re-enable button
+        // Hide scan line
+        scanLine.classList.add('hidden');
+        captureBtn.disabled = false; 
         backBtn.disabled = false;
 
-        capturePhoto(); // Now capture the photo and proceed
+        capturePhoto(); 
     }
 
     function capturePhoto() {
@@ -504,7 +504,6 @@
     }
 
     async function submitAnalysis() {
-        // Stop camera stream immediately
         if (currentStream) {
             currentStream.getTracks().forEach(track => track.stop());
             currentStream = null;
@@ -534,7 +533,6 @@
 
     function goBack() {
         if (currentStep > 0) {
-            // Remove the photo for the current step if it was already captured
             const prevStepType = captureSequence[currentStep].type;
             if (capturedPhotos[prevStepType]) {
                 delete capturedPhotos[prevStepType];
@@ -542,7 +540,6 @@
             currentStep--;
             updateCaptureStepUI();
         } else {
-            // If on the first step, go back to welcome screen
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
                 currentStream = null;
@@ -550,7 +547,7 @@
             captureScreen.classList.add('hidden');
             appContainer.classList.remove('hidden');
             welcomeView.classList.remove('hidden');
-            capturedPhotos = {}; // Clear all photos when returning to start
+            capturedPhotos = {}; 
         }
     }
 
@@ -564,7 +561,7 @@
         statusBox.classList.add('hidden');
 
         currentStep = 0;
-        capturedPhotos = {}; // Re-initialize the object to clear it
+        capturedPhotos = {}; 
 
         if (currentStream) {
             currentStream.getTracks().forEach(track => track.stop());
@@ -573,9 +570,9 @@
     }
     
     startBtn.addEventListener('click', startCaptureFlow);
-    captureBtn.addEventListener('click', handleCaptureButtonClick); // Use the new handler
+    captureBtn.addEventListener('click', handleCaptureButtonClick);
     resetBtn.addEventListener('click', () => resetUI(false));
-    backBtn.addEventListener('click', goBack); // Use the new goBack function
+    backBtn.addEventListener('click', goBack);
 
     function pollForResult(jobId) {
         pollingInterval = setInterval(async () => {

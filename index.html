@@ -269,28 +269,47 @@
             box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7);
         }
 
-        .guide-container, .eye-guides {
+        /* This is the general container, we keep it centered */
+        .guide-container {
             position: absolute;
-            top: 40%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
             align-items: center;
+            justify-content: center;
             width: 100%;
             height: 100%;
         }
-        .eye-guides { width: 40%; justify-content: space-between; }
-        .guide-container { justify-content: center; }
 
-        .eye-circle, .lips-guide svg, .tongue-guide, .nails-guide {
-            filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        /* Rule specifically for EYES */
+        .eye-guides {
+            position: absolute;
+            top: 40%; /* Eyes at 40% */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            width: 40%; 
+            justify-content: space-between;
         }
-        .eye-circle { width: 60px; height: 60px; border-radius: 50%; }
-        .lips-guide svg { width: 180px; height: auto; stroke: rgba(255, 255, 255, 0.8); stroke-width: 3; fill: none; border: none; box-shadow: none; }
-        .tongue-guide { width: 90px; height: 140px; border-radius: 50% / 60%; }
-        .nails-guide { width: 250px; height: 180px; border-radius: 20px; }
+
+        /* Rule specifically for LIPS */
+        .lips-guide {
+            position: relative; /* No change needed, just for context */
+        }
+        .lips-guide svg {
+            /* We can adjust the position of the lips guide container if needed */
+            position: relative;
+            top: 20px; /* Example: push down by 20px, adjust as needed */
+        }
+
+        /* Rule specifically for TONGUE */
+        .tongue-guide {
+            position: relative; /* No change needed, just for context */
+            /* We can adjust the position of the tongue guide if needed */
+            top: 10px; /* Example: push down by 10px, adjust as needed */
+        }
         
         #scanAnimation {
             position: absolute;

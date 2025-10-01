@@ -141,7 +141,6 @@
             display: none !important;
         }
         
-        /* --- Styles for Redesigned Capture Screen --- */
         #captureScreen {
             position: fixed;
             top: 0;
@@ -150,12 +149,29 @@
             height: 100%;
             background-color: var(--modal-bg);
             z-index: 1000;
-            display: flex; /* Use flexbox for layout */
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 2rem; /* Space between camera and instructions */
+            gap: 2rem;
             padding: 2rem;
             box-sizing: border-box;
+        }
+
+        /* ✨ New style for the back button */
+        #backBtn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+        }
+        #backBtn:hover {
+            color: var(--primary-color);
         }
 
         .capture-main {
@@ -166,7 +182,7 @@
 
         .video-container {
             position: relative;
-            width: 500px; /* Adjust size as needed */
+            width: 500px;
             height: 375px;
             background-color: #000;
             border-radius: 16px;
@@ -195,7 +211,7 @@
         }
         
         .instruction-panel {
-            max-width: 400px; /* Limit width of instructions */
+            max-width: 400px;
             text-align: left;
         }
 
@@ -228,13 +244,12 @@
             width: 100%;
         }
         
-        /* --- Styles for Overlay Guides --- */
         .face-oval-guide {
             width: 75%;
             height: 95%;
             border: 3px dashed var(--primary-color);
             border-radius: 50%;
-            box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7); /* Cutout effect */
+            box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7);
         }
 
         .guide-container, .eye-guides {
@@ -268,9 +283,11 @@
                 flex-direction: column;
                 gap: 1rem;
                 padding: 1rem;
+                padding-top: 4rem; /* Add padding to avoid overlap with back button */
             }
             .video-container { width: 90vw; height: calc(90vw * 0.75); }
             .instruction-panel { max-width: 90vw; }
+            #backBtn { top: 1rem; left: 1rem; }
         }
         @media (max-width: 768px) {
             .app-container { padding: 1.5rem; }
@@ -302,6 +319,8 @@
 </div>
 
 <div id="captureScreen" class="hidden">
+    <button id="backBtn">← Back</button>
+
     <div class="capture-main">
         <div class="video-container">
             <video id="video" autoplay playsinline></video>
@@ -323,6 +342,7 @@
     const welcomeView = document.getElementById('welcomeView');
     const startBtn = document.getElementById('startBtn');
     const captureScreen = document.getElementById('captureScreen');
+    const backBtn = document.getElementById('backBtn'); // ✨ New reference
     const stepIndicator = document.getElementById('stepIndicator');
     const stepTitle = document.getElementById('stepTitle');
     const stepSubtitle = document.getElementById('stepSubtitle');
@@ -338,48 +358,24 @@
     
     const captureSequence = [
         { 
-            type: 'eyes', 
-            title: 'EYES',
-            subtitle: 'This step scans your eyes for analysis.',
-            instructions: `
-                <p><strong>Face Alignment:</strong> Look directly at the camera and bring your face close enough so it is fully contained within the large outer oval guide on the screen.</p>
-                <p><strong>Eye Placement:</strong> Move your face slightly until each of your eyes aligns perfectly within the two smaller inner circles.</p>
-                <p><strong>Hold Still:</strong> Once your eyes are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>
-            `,
+            type: 'eyes', title: 'EYES', subtitle: 'This step scans your eyes for analysis.',
+            instructions: `<p><strong>Face Alignment:</strong> Look directly at the camera and bring your face close enough so it is fully contained within the large outer oval guide on the screen.</p><p><strong>Eye Placement:</strong> Move your face slightly until each of your eyes aligns perfectly within the two smaller inner circles.</p><p><strong>Hold Still:</strong> Once your eyes are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>`,
             overlayHtml: `<div class="face-oval-guide"></div><div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>` 
         },
         { 
-            type: 'lips', 
-            title: 'LIPS',
-            subtitle: 'This step focuses on scanning the color and condition of your lips.',
-            instructions: `
-                <p><strong>Face Alignment:</strong> Ensure your face remains within the large outer oval guide.</p>
-                <p><strong>Lip Placement:</strong> Align your lips with the lip-shaped outline provided inside the oval guide. Keep your lips relaxed and closed, but not tightly pressed.</p>
-                <p><strong>Hold Still:</strong> Once your lips are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>
-            `,
+            type: 'lips', title: 'LIPS', subtitle: 'This step focuses on scanning the color and condition of your lips.',
+            instructions: `<p><strong>Face Alignment:</strong> Ensure your face remains within the large outer oval guide.</p><p><strong>Lip Placement:</strong> Align your lips with the lip-shaped outline provided inside the oval guide. Keep your lips relaxed and closed, but not tightly pressed.</p><p><strong>Hold Still:</strong> Once your lips are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>`,
             overlayHtml: `<div class="face-oval-guide"></div><div class="guide-container lips-guide"><svg viewBox="0 0 220 100"><path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" /></svg></div>`
         },
         { 
-            type: 'tongue', 
-            title: 'TONGUE',
-            subtitle: 'This step requires a clear view of your tongue.',
-            instructions: `
-                <p><strong>Face Alignment:</strong> Keep your face aligned within the large outer oval guide.</p>
-                <p><strong>Tongue Placement:</strong> Open your mouth and stick out your tongue naturally. Align your tongue with the tongue-shaped outline provided inside the oval guide.</p>
-                <p><strong>Hold Still:</strong> Keep your tongue still and steady and click the button below. Do not move until the scan is completed and you are in the next Step.</p>
-            `,
+            type: 'tongue', title: 'TONGUE', subtitle: 'This step requires a clear view of your tongue.',
+            instructions: `<p><strong>Face Alignment:</strong> Keep your face aligned within the large outer oval guide.</p><p><strong>Tongue Placement:</strong> Open your mouth and stick out your tongue naturally. Align your tongue with the tongue-shaped outline provided inside the oval guide.</p><p><strong>Hold Still:</strong> Keep your tongue still and steady and click the button below. Do not move until the scan is completed and you are in the next Step.</p>`,
             overlayHtml: `<div class="face-oval-guide"></div><div class="guide-container"><div class="tongue-guide"></div></div>` 
         },
         { 
-            type: 'nails', 
-            title: 'NAILS',
-            subtitle: 'This step scans the surface and nail bed of your fingernails.',
-            instructions: `
-                <p><strong>Hand Prep:</strong> Ensure your nails are clean and free of polish.</p>
-                <p><strong>Placement:</strong> Place the tips of your fingers over the screen so that all five nails are visible and contained within the rectangular box guide.</p>
-                <p><strong>Hold Still:</strong> Hold your hand steady and click the button below. Do not move until the scan is completed and you see the final analysis.</p>
-            `,
-            overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>` // No oval guide for nails
+            type: 'nails', title: 'NAILS', subtitle: 'This step scans the surface and nail bed of your fingernails.',
+            instructions: `<p><strong>Hand Prep:</strong> Ensure your nails are clean and free of polish.</p><p><strong>Placement:</strong> Place the tips of your fingers over the screen so that all five nails are visible and contained within the rectangular box guide.</p><p><strong>Hold Still:</strong> Hold your hand steady and click the button below. Do not move until the scan is completed and you see the final analysis.</p>`,
+            overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>`
         }
     ];
     let currentStep = 0;
@@ -440,17 +436,14 @@
     }
 
     async function submitAnalysis() {
-        captureScreen.classList.add('hidden');
+        // We can reuse the resetUI function's logic to hide the camera
+        resetUI(true); // Pass a flag to prevent showing the welcome screen yet
+
         appContainer.classList.remove('hidden');
         welcomeView.classList.add('hidden');
         statusBox.classList.remove('hidden');
         resultWrapper.classList.add('hidden');
         statusText.textContent = 'Uploading images...';
-
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
-            currentStream = null;
-        }
 
         try {
             const response = await fetch('/upload', {
@@ -467,17 +460,29 @@
         }
     }
 
-    function resetUI() {
+    // ✨ Updated resetUI to handle both "Back" and "Start New"
+    function resetUI(isSubmitting = false) {
+        captureScreen.classList.add('hidden');
+        if (!isSubmitting) {
+            appContainer.classList.remove('hidden');
+            welcomeView.classList.remove('hidden');
+        }
         resultWrapper.classList.add('hidden');
         statusBox.classList.add('hidden');
-        welcomeView.classList.remove('hidden');
+
         currentStep = 0;
         Object.keys(capturedPhotos).forEach(key => delete capturedPhotos[key]);
+        
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+        }
     }
     
     startBtn.addEventListener('click', startCaptureFlow);
     captureBtn.addEventListener('click', takePhoto);
-    resetBtn.addEventListener('click', resetUI);
+    resetBtn.addEventListener('click', () => resetUI(false));
+    backBtn.addEventListener('click', () => resetUI(false)); // ✨ Event listener for Back button
 
     function pollForResult(jobId) {
         pollingInterval = setInterval(async () => {

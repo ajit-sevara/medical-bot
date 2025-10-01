@@ -157,7 +157,7 @@
             box-sizing: border-box;
             color: var(--text-color);
         }
-        
+
         .capture-buttons {
             display: flex;
             gap: 1rem;
@@ -253,8 +253,8 @@
         }
 
         .face-oval-guide {
-            width: 75%;
-            height: 95%;
+            width: 57%;
+            height: 88%;
             border: 3px dashed var(--primary-color);
             border-radius: 50%;
             box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7);
@@ -283,30 +283,34 @@
         .tongue-guide { width: 90px; height: 140px; border-radius: 50% / 60%; }
         .nails-guide { width: 250px; height: 180px; border-radius: 20px; }
 
+        /* --- ✨ UPDATED SCAN ANIMATION --- */
         #scanAnimation {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
+            pointer-events: none;
             z-index: 10;
         }
-        .scan-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: #00ffff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
+
+        .scan-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #00ffff;
+            box-shadow: 
+                0 0 10px 2px #00ffff,
+                0 0 20px 6px rgba(0, 255, 255, 0.7),
+                0 0 35px 12px rgba(0, 255, 255, 0.3);
+            border-radius: 3px;
+            animation: scanEffect 2s ease-in-out; /* The animation runs for 2 seconds */
+        }
+
+        @keyframes scanEffect {
+            0% { top: 0%; }
+            100% { top: calc(100% - 3px); }
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -362,8 +366,7 @@
             <video id="video" autoplay playsinline></video>
             <div id="cameraOverlay"></div> 
             <div id="scanAnimation" class="hidden">
-                <div class="scan-spinner"></div>
-                <span>Scanning...</span>
+                <div class="scan-line"></div>
             </div>
         </div>
     </div>
@@ -453,8 +456,6 @@
         stepTitle.textContent = step.title;
         stepSubtitle.textContent = step.subtitle;
         stepInstructions.innerHTML = step.instructions;
-        
-        // --- THE FIX: Set the innerHTML, don't append to it ---
         cameraOverlay.innerHTML = step.overlayHtml;
 
         if (currentStep === captureSequence.length - 1) {
@@ -508,6 +509,7 @@
             currentStream.getTracks().forEach(track => track.stop());
             currentStream = null;
         }
+
         captureScreen.classList.add('hidden');
         appContainer.classList.remove('hidden');
         welcomeView.classList.add('hidden');
@@ -550,12 +552,10 @@
         }
     }
 
-    function resetUI(isSubmitting = false) {
+    function resetUI() {
         captureScreen.classList.add('hidden');
-        if (!isSubmitting) {
-            appContainer.classList.remove('hidden');
-            welcomeView.classList.remove('hidden');
-        }
+        appContainer.classList.remove('hidden');
+        welcomeView.classList.remove('hidden');
         resultWrapper.classList.add('hidden');
         statusBox.classList.add('hidden');
         currentStep = 0;
@@ -568,7 +568,7 @@
     
     startBtn.addEventListener('click', startCaptureFlow);
     captureBtn.addEventListener('click', handleCaptureButtonClick);
-    resetBtn.addEventListener('click', () => resetUI(false));
+    resetBtn.addEventListener('click', resetUI);
     backBtn.addEventListener('click', goBack);
 
     function pollForResult(jobId) {

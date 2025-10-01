@@ -157,7 +157,7 @@
             box-sizing: border-box;
             color: var(--text-color);
         }
-
+        
         .capture-buttons {
             display: flex;
             gap: 1rem;
@@ -253,8 +253,8 @@
         }
 
         .face-oval-guide {
-            width: 57%;
-            height: 88%;
+            width: 75%;
+            height: 95%;
             border: 3px dashed var(--primary-color);
             border-radius: 50%;
             box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7);
@@ -283,25 +283,30 @@
         .tongue-guide { width: 90px; height: 140px; border-radius: 50% / 60%; }
         .nails-guide { width: 250px; height: 180px; border-radius: 20px; }
 
-        /* --- New Scan Line Animation styles --- */
-        #scanLine {
+        #scanAnimation {
             position: absolute;
+            top: 0;
             left: 0;
             width: 100%;
-            height: 8px; /* Thicker scan line */
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.8), transparent);
-            box-shadow: 
-                0 0 15px 5px rgba(0, 255, 255, 0.7),
-                0 0 30px 10px rgba(0, 255, 255, 0.5);
-            border-radius: 4px;
-            animation: scanEffect 2s ease-in-out infinite alternate; /* 2-second animation, alternates direction */
-            display: none; /* Hidden by default */
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            z-index: 10;
         }
-
-        @keyframes scanEffect {
-            0% { top: 0%; opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { top: calc(100% - 8px); opacity: 0.5; } /* Adjust for height of scan line */
+        .scan-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #00ffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -311,6 +316,7 @@
                 flex-direction: column;
                 gap: 1rem;
                 padding: 1rem;
+                padding-top: 4rem;
             }
             .video-container { width: 90vw; height: calc(90vw * 0.75); }
             .instruction-panel { max-width: 90vw; }
@@ -354,8 +360,11 @@
     <div class="capture-main">
         <div class="video-container">
             <video id="video" autoplay playsinline></video>
-            <div id="cameraOverlay">
-                <div id="scanLine" class="hidden"></div> </div> 
+            <div id="cameraOverlay"></div> 
+            <div id="scanAnimation" class="hidden">
+                <div class="scan-spinner"></div>
+                <span>Scanning...</span>
+            </div>
         </div>
     </div>
     <div class="instruction-panel">
@@ -383,8 +392,8 @@
     const stepInstructions = document.getElementById('stepInstructions');
     const video = document.getElementById('video');
     const cameraOverlay = document.getElementById('cameraOverlay');
-    const scanLine = document.getElementById('scanLine'); // New reference for scan line
     const captureBtn = document.getElementById('captureBtn');
+    const scanAnimation = document.getElementById('scanAnimation');
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
     const resultWrapper = document.getElementById('resultWrapper');
@@ -429,8 +438,8 @@
             currentStream = stream;
             appContainer.classList.add('hidden');
             captureScreen.classList.remove('hidden');
-            currentStep = 0; 
-            capturedPhotos = {}; 
+            currentStep = 0;
+            capturedPhotos = {};
             updateCaptureStepUI();
         } catch (err) {
             console.error("Error accessing camera:", err);
@@ -445,14 +454,8 @@
         stepSubtitle.textContent = step.subtitle;
         stepInstructions.innerHTML = step.instructions;
         
-        // Clear previous overlays, then add the new ones
-        cameraOverlay.innerHTML = ''; 
-        
-        // For non-nail steps, we need the face oval guide first
-        if (step.type !== 'nails') {
-            cameraOverlay.innerHTML += `<div class="face-oval-guide"></div>`;
-        }
-        cameraOverlay.innerHTML += step.overlayHtml; // Add specific guides
+        // --- THE FIX: Set the innerHTML, don't append to it ---
+        cameraOverlay.innerHTML = step.overlayHtml;
 
         if (currentStep === captureSequence.length - 1) {
             captureBtn.textContent = 'Get my Analysis';
@@ -468,20 +471,17 @@
     }
 
     async function handleCaptureButtonClick() {
-        captureBtn.disabled = true; 
+        captureBtn.disabled = true;
         backBtn.disabled = true;
-        
-        // Show scan line and start animation
-        scanLine.classList.remove('hidden');
-        
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds
+        scanAnimation.classList.remove('hidden');
 
-        // Hide scan line
-        scanLine.classList.add('hidden');
-        captureBtn.disabled = false; 
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        scanAnimation.classList.add('hidden');
+        captureBtn.disabled = false;
         backBtn.disabled = false;
 
-        capturePhoto(); 
+        capturePhoto();
     }
 
     function capturePhoto() {
@@ -508,7 +508,6 @@
             currentStream.getTracks().forEach(track => track.stop());
             currentStream = null;
         }
-
         captureScreen.classList.add('hidden');
         appContainer.classList.remove('hidden');
         welcomeView.classList.add('hidden');
@@ -533,9 +532,9 @@
 
     function goBack() {
         if (currentStep > 0) {
-            const prevStepType = captureSequence[currentStep].type;
-            if (capturedPhotos[prevStepType]) {
-                delete capturedPhotos[prevStepType];
+            const currentStepType = captureSequence[currentStep].type;
+            if (capturedPhotos[currentStepType]) {
+                delete capturedPhotos[currentStepType];
             }
             currentStep--;
             updateCaptureStepUI();
@@ -547,7 +546,7 @@
             captureScreen.classList.add('hidden');
             appContainer.classList.remove('hidden');
             welcomeView.classList.remove('hidden');
-            capturedPhotos = {}; 
+            capturedPhotos = {};
         }
     }
 
@@ -559,10 +558,8 @@
         }
         resultWrapper.classList.add('hidden');
         statusBox.classList.add('hidden');
-
         currentStep = 0;
-        capturedPhotos = {}; 
-
+        capturedPhotos = {};
         if (currentStream) {
             currentStream.getTracks().forEach(track => track.stop());
             currentStream = null;

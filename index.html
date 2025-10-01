@@ -521,7 +521,7 @@
         welcomeView.classList.add('hidden');
         statusBox.classList.remove('hidden');
         resultWrapper.classList.add('hidden');
-        statusText.textContent = 'Uploading images...';
+        statusText.textContent = 'Analyzing...';
 
         try {
             const response = await fetch('/upload', {
@@ -531,7 +531,7 @@
             });
             if (!response.ok) throw new Error(`Server error: ${response.status}`);
             const { jobId } = await response.json();
-            statusText.textContent = 'Analyzing images...';
+            statusText.textContent = 'Analyzing...';
             pollForResult(jobId);
         } catch (error) {
             handleError(`Upload failed: ${error.message}`);

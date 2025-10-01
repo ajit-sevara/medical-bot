@@ -130,8 +130,8 @@
         }
 
         #result-text {
-            white-space: pre-wrap; /* ✅ This makes the text wrap */
-            word-wrap: break-word;   /* Ensures long words break and prevents horizontal scroll */
+            white-space: pre-wrap;
+            word-wrap: break-word;
             font-size: 0.95rem;
             line-height: 1.6;
             text-align: left;
@@ -141,6 +141,7 @@
             display: none !important;
         }
         
+        /* --- Styles for Redesigned Capture Screen --- */
         #captureScreen {
             position: fixed;
             top: 0;
@@ -149,34 +150,23 @@
             height: 100%;
             background-color: var(--modal-bg);
             z-index: 1000;
+            display: flex; /* Use flexbox for layout */
+            align-items: center;
+            justify-content: center;
+            gap: 2rem; /* Space between camera and instructions */
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .capture-main {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            color: var(--text-color);
         }
 
-        .capture-header {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .capture-header img {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 0.5rem;
-        }
-
-        .capture-header h2 {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        
         .video-container {
             position: relative;
-            width: 500px;
-            max-width: 90vw;
+            width: 500px; /* Adjust size as needed */
             height: 375px;
             background-color: #000;
             border-radius: 16px;
@@ -199,8 +189,52 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            padding: 10%; 
-            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .instruction-panel {
+            max-width: 400px; /* Limit width of instructions */
+            text-align: left;
+        }
+
+        .instruction-panel h2 {
+            font-size: 1rem;
+            color: #9ca3af;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .instruction-panel h3 {
+            font-size: 1.5rem;
+            margin: 0.25rem 0 1rem 0;
+            color: var(--text-color);
+        }
+
+        .instruction-panel p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin: 0.5rem 0;
+        }
+        
+        .instruction-panel strong {
+            color: var(--text-color);
+        }
+
+        #captureBtn {
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        
+        /* --- Styles for Overlay Guides --- */
+        .face-oval-guide {
+            width: 75%;
+            height: 95%;
+            border: 3px dashed var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7); /* Cutout effect */
         }
 
         .guide-container, .eye-guides {
@@ -213,59 +247,34 @@
             width: 100%;
             height: 100%;
         }
-        
-        .eye-guides {
-            width: 50%;
-            justify-content: space-between;
-        }
-        .guide-container {
-            justify-content: center;
-        }
+        .eye-guides { width: 40%; justify-content: space-between; }
+        .guide-container { justify-content: center; }
 
         .eye-circle, .lips-guide svg, .tongue-guide, .nails-guide {
             filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
             border: 3px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
-        .eye-circle { width: 90px; height: 90px; border-radius: 50%; }
-        .lips-guide svg { width: 250px; height: auto; stroke: rgba(255, 255, 255, 0.8); stroke-width: 3; fill: none; border: none; box-shadow: none; }
-        .tongue-guide { width: 110px; height: 180px; border-radius: 50% / 60%; }
-        .nails-guide { width: 200px; height: 130px; border-radius: 20px; }
+        .eye-circle { width: 60px; height: 60px; border-radius: 50%; }
+        .lips-guide svg { width: 180px; height: auto; stroke: rgba(255, 255, 255, 0.8); stroke-width: 3; fill: none; border: none; box-shadow: none; }
+        .tongue-guide { width: 90px; height: 140px; border-radius: 50% / 60%; }
+        .nails-guide { width: 250px; height: 180px; border-radius: 20px; }
 
-        .scan-line {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: #00ffff;
-            box-shadow: 
-                0 0 10px 2px #00ffff,
-                0 0 20px 6px rgba(0, 255, 255, 0.7),
-                0 0 35px 12px rgba(0, 255, 255, 0.3);
-            border-radius: 3px;
-            animation: scanEffect 3s linear infinite;
-        }
 
-        @keyframes scanEffect { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        #captureBtn {
-            margin-top: 1.5rem;
-            width: auto;
-            padding: 0.8rem 2.5rem;
+        @media (max-width: 1024px) {
+            #captureScreen {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .video-container { width: 90vw; height: calc(90vw * 0.75); }
+            .instruction-panel { max-width: 90vw; }
         }
-
         @media (max-width: 768px) {
-            body { padding: 0.5rem; }
             .app-container { padding: 1.5rem; }
             header h1 { font-size: 1.5rem; }
-            .capture-header img { width: 60px; height: 60px; }
-            .capture-header h2 { font-size: 1.2rem; }
-            .video-container { width: 95vw; height: calc(95vw * 0.75); }
-            .eye-circle { width: 70px; height: 70px; }
-            .lips-guide svg { width: 200px; }
-            .tongue-guide { width: 90px; height: 150px; }
-            .nails-guide { width: 160px; height: 110px; }
         }
     </style>
 </head>
@@ -275,16 +284,14 @@
     <div id="welcomeView">
         <header>
             <h1>Visual Health Analysis in 4 easy steps</h1>
-            <p> </p>
+            <p>Our AI will guide you through capturing four photos for a visual health assessment.</p>
         </header>
         <button id="startBtn" class="action-button">Start Now</button>
     </div>
-
     <div id="statusBox" class="status-box hidden">
         <div class="spinner"></div>
         <span id="statusText"></span>
     </div>
-    
     <div id="resultWrapper" class="result-wrapper hidden">
         <h3>Analysis Result</h3>
         <div id="result-content">
@@ -295,18 +302,20 @@
 </div>
 
 <div id="captureScreen" class="hidden">
-    <div class="capture-header">
-        <img id="stepIcon" src="/eyes.png" alt="Step Icon">
-        <h2 id="stepIndicator">1 of 4</h2>
+    <div class="capture-main">
+        <div class="video-container">
+            <video id="video" autoplay playsinline></video>
+            <div id="cameraOverlay"></div> 
+        </div>
     </div>
-
-    <div class="video-container">
-        <video id="video" autoplay playsinline></video>
-        <div id="cameraOverlay">
-            <div class="scan-line"></div> 
-        </div> 
+    <div class="instruction-panel">
+        <h2 id="stepIndicator"></h2>
+        <h3 id="stepTitle"></h3>
+        <p id="stepSubtitle"></p>
+        <h4>Instructions:</h4>
+        <div id="stepInstructions"></div>
+        <button id="captureBtn" class="action-button"></button>
     </div>
-    <button id="captureBtn" class="action-button">Submit & Next</button>
 </div>
 
 <script>
@@ -314,8 +323,10 @@
     const welcomeView = document.getElementById('welcomeView');
     const startBtn = document.getElementById('startBtn');
     const captureScreen = document.getElementById('captureScreen');
-    const stepIcon = document.getElementById('stepIcon');
     const stepIndicator = document.getElementById('stepIndicator');
+    const stepTitle = document.getElementById('stepTitle');
+    const stepSubtitle = document.getElementById('stepSubtitle');
+    const stepInstructions = document.getElementById('stepInstructions');
     const video = document.getElementById('video');
     const cameraOverlay = document.getElementById('cameraOverlay');
     const captureBtn = document.getElementById('captureBtn');
@@ -326,10 +337,50 @@
     const resetBtn = document.getElementById('resetBtn');
     
     const captureSequence = [
-        { type: 'eyes', icon: '/eyes.png', overlayHtml: `<div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>` },
-        { type: 'lips', icon: '/lips.png', overlayHtml: `<div class="guide-container lips-guide"><svg viewBox="0 0 220 100"><path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" /></svg></div>` },
-        { type: 'tongue', icon: '/tongue.png', overlayHtml: `<div class="guide-container"><div class="tongue-guide"></div></div>` },
-        { type: 'nails', icon: '/nail.png', overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>` }
+        { 
+            type: 'eyes', 
+            title: 'EYES',
+            subtitle: 'This step scans your eyes for analysis.',
+            instructions: `
+                <p><strong>Face Alignment:</strong> Look directly at the camera and bring your face close enough so it is fully contained within the large outer oval guide on the screen.</p>
+                <p><strong>Eye Placement:</strong> Move your face slightly until each of your eyes aligns perfectly within the two smaller inner circles.</p>
+                <p><strong>Hold Still:</strong> Once your eyes are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>
+            `,
+            overlayHtml: `<div class="face-oval-guide"></div><div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>` 
+        },
+        { 
+            type: 'lips', 
+            title: 'LIPS',
+            subtitle: 'This step focuses on scanning the color and condition of your lips.',
+            instructions: `
+                <p><strong>Face Alignment:</strong> Ensure your face remains within the large outer oval guide.</p>
+                <p><strong>Lip Placement:</strong> Align your lips with the lip-shaped outline provided inside the oval guide. Keep your lips relaxed and closed, but not tightly pressed.</p>
+                <p><strong>Hold Still:</strong> Once your lips are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>
+            `,
+            overlayHtml: `<div class="face-oval-guide"></div><div class="guide-container lips-guide"><svg viewBox="0 0 220 100"><path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" /></svg></div>`
+        },
+        { 
+            type: 'tongue', 
+            title: 'TONGUE',
+            subtitle: 'This step requires a clear view of your tongue.',
+            instructions: `
+                <p><strong>Face Alignment:</strong> Keep your face aligned within the large outer oval guide.</p>
+                <p><strong>Tongue Placement:</strong> Open your mouth and stick out your tongue naturally. Align your tongue with the tongue-shaped outline provided inside the oval guide.</p>
+                <p><strong>Hold Still:</strong> Keep your tongue still and steady and click the button below. Do not move until the scan is completed and you are in the next Step.</p>
+            `,
+            overlayHtml: `<div class="face-oval-guide"></div><div class="guide-container"><div class="tongue-guide"></div></div>` 
+        },
+        { 
+            type: 'nails', 
+            title: 'NAILS',
+            subtitle: 'This step scans the surface and nail bed of your fingernails.',
+            instructions: `
+                <p><strong>Hand Prep:</strong> Ensure your nails are clean and free of polish.</p>
+                <p><strong>Placement:</strong> Place the tips of your fingers over the screen so that all five nails are visible and contained within the rectangular box guide.</p>
+                <p><strong>Hold Still:</strong> Hold your hand steady and click the button below. Do not move until the scan is completed and you see the final analysis.</p>
+            `,
+            overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>` // No oval guide for nails
+        }
     ];
     let currentStep = 0;
     const capturedPhotos = {};
@@ -356,14 +407,16 @@
 
     function updateCaptureStepUI() {
         const step = captureSequence[currentStep];
-        stepIcon.src = step.icon;
-        stepIndicator.textContent = `${currentStep + 1} of ${captureSequence.length}`;
-        cameraOverlay.innerHTML = `<div class="scan-line"></div>` + step.overlayHtml;
+        stepIndicator.textContent = `STEP ${currentStep + 1} OF ${captureSequence.length}`;
+        stepTitle.textContent = step.title;
+        stepSubtitle.textContent = step.subtitle;
+        stepInstructions.innerHTML = step.instructions;
+        cameraOverlay.innerHTML = step.overlayHtml;
 
         if (currentStep === captureSequence.length - 1) {
             captureBtn.textContent = 'Get my Analysis';
         } else {
-            captureBtn.textContent = 'Submit & Next';
+            captureBtn.textContent = 'Scan and Next';
         }
     }
 

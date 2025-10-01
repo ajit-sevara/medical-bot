@@ -12,9 +12,6 @@
             --card-background: #ffffff;
             --text-color: #334155;
             --border-color: #e2e8f0;
-            --success-bg: #f0fdf4;
-            --success-border: #bbf7d0;
-            --success-text: #166534;
             --modal-bg: #ffffff;
         }
 
@@ -36,7 +33,7 @@
             border-radius: 16px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             width: 100%;
-            max-width: 650px;
+            max-width: 700px; /* Slightly wider container */
             padding: 2.5rem;
             text-align: center;
             display: flex;
@@ -103,60 +100,65 @@
             animation: spin 1s linear infinite;
         }
         
-        /* --- ✨ UPDATED RESULT BOX STYLES --- */
+        /* --- ✨ UPDATED RESULT BOX UI --- */
         .result-wrapper {
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 16px; /* Match container radius */
             text-align: left;
-            padding: 2rem; /* Increased padding */
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 2.5rem; /* More padding */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
         }
         
         .result-wrapper button {
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
 
         .result-wrapper h3 {
-            margin: 0 0 1rem 0;
+            margin: 0 0 1.5rem 0; /* More space below header */
             color: var(--primary-color);
-            font-size: 1.3rem;
-            padding-bottom: 0.75rem;
+            font-size: 1.5rem; /* Larger header */
+            font-weight: 700;
+            padding-bottom: 1rem;
             border-bottom: 1px solid var(--border-color);
             text-align: center;
         }
         
         #result-content {
-            max-height: 350px; /* Increased height */
+            max-height: 400px; /* Taller scroll area */
             overflow-y: auto;
             text-align: left;
-            padding-right: 1rem; /* Space for scrollbar */
+            padding-right: 1rem;
         }
+        
+        /* Modern scrollbar styling */
+        #result-content::-webkit-scrollbar { width: 8px; }
+        #result-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        #result-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+        #result-content::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
-        /* Modern scrollbar for Webkit browsers */
-        #result-content::-webkit-scrollbar {
-            width: 8px;
+        /* Styles for parsed content */
+        .result-section {
+            margin-bottom: 1.25rem;
         }
-        #result-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
+        .result-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0 0 0.5rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        #result-content::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 4px;
-        }
-        #result-content::-webkit-scrollbar-thumb:hover {
-            background: #aaa;
-        }
-
-        #result-text {
-            white-space: pre-wrap;   /* Keeps formatting but wraps text */
-            overflow-wrap: break-word; /* Prevents horizontal scroll */
+        .result-section p {
             font-size: 0.95rem;
-            line-height: 1.6;
-            text-align: left;
+            line-height: 1.7;
+            color: #475569;
+            margin: 0;
+            white-space: pre-wrap;
+            overflow-wrap: break-word; /* This is the key to prevent horizontal scroll */
         }
         /* --- End of Updated Styles --- */
+
 
         .hidden {
             display: none !important;
@@ -249,33 +251,19 @@
             text-align: left;
         }
 
-        .instruction-panel h2 {
-            font-size: 1rem;
-            color: #9ca3af;
-            font-weight: 600;
-            text-transform: uppercase;
+        .instruction-panel h2, .instruction-panel h3, .instruction-panel p, .instruction-panel h4 {
             margin: 0;
         }
+        .instruction-panel h2 { font-size: 1rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; }
+        .instruction-panel h3 { font-size: 1.5rem; margin: 0.25rem 0 1rem 0; color: var(--text-color); }
+        .instruction-panel h4 { margin-top: 1rem; }
+        .instruction-panel p { color: #6b7280; line-height: 1.6; margin: 0.5rem 0; }
+        .instruction-panel strong { color: var(--text-color); }
 
-        .instruction-panel h3 {
-            font-size: 1.5rem;
-            margin: 0.25rem 0 1rem 0;
-            color: var(--text-color);
-        }
-
-        .instruction-panel p {
-            color: #6b7280;
-            line-height: 1.6;
-            margin: 0.5rem 0;
-        }
-        
-        .instruction-panel strong {
-            color: var(--text-color);
-        }
 
         .face-oval-guide {
-            width: 54%;
-            height: 92%;
+            width: 75%;
+            height: 95%;
             border: 3px dashed var(--primary-color);
             border-radius: 50%;
             box-shadow: 0 0 0 9999px rgba(255, 255, 255, 0.7);
@@ -325,7 +313,7 @@
                 0 0 20px 6px rgba(0, 255, 255, 0.7),
                 0 0 35px 12px rgba(0, 255, 255, 0.3);
             border-radius: 3px;
-            animation: scanEffect 1s ease-in-out;
+            animation: scanEffect 1s ease-in-out infinite alternate;
         }
 
         @keyframes scanEffect {
@@ -373,9 +361,7 @@
     </div>
     <div id="resultWrapper" class="result-wrapper hidden">
         <h3>Analysis Result</h3>
-        <div id="result-content">
-            <pre id="resultText"></pre>
-        </div>
+        <div id="result-content"></div>
         <button type="button" id="resetBtn" class="action-button">Start New Analysis</button>
     </div>
 </div>
@@ -420,7 +406,7 @@
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
     const resultWrapper = document.getElementById('resultWrapper');
-    const resultText = document.getElementById('resultText');
+    const resultContent = document.getElementById('result-content'); // Updated reference
     const resetBtn = document.getElementById('resetBtn');
     
     const captureSequence = [
@@ -496,7 +482,7 @@
         backBtn.disabled = true;
         scanAnimation.classList.remove('hidden');
 
-        await new Promise(resolve => setTimeout(resolve, 4000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         scanAnimation.classList.add('hidden');
         captureBtn.disabled = false;
@@ -611,9 +597,49 @@
         }, 3000); 
     }
 
+    // --- ✨ UPDATED displayResult Function ---
     function displayResult(result) {
         statusBox.classList.add('hidden');
-        resultText.textContent = result;
+        
+        // Clear previous results
+        resultContent.innerHTML = '';
+
+        // Split the result text by lines
+        const lines = result.trim().split('\n');
+        let currentHtml = '';
+        
+        lines.forEach(line => {
+            line = line.trim();
+            if (line.endsWith(':')) {
+                // This line is a heading
+                if (currentHtml) { // Append the previous section before starting a new one
+                    const p = document.createElement('p');
+                    p.textContent = currentHtml.trim();
+                    const lastSection = resultContent.lastElementChild;
+                    if(lastSection) lastSection.appendChild(p);
+                }
+                currentHtml = ''; // Reset for the next section's content
+                const section = document.createElement('div');
+                section.className = 'result-section';
+                const h4 = document.createElement('h4');
+                h4.textContent = line;
+                section.appendChild(h4);
+                resultContent.appendChild(section);
+            } else if (line) {
+                // This is content for the current heading
+                currentHtml += line + '\n';
+            }
+        });
+
+        // Append the last section's content
+        if (currentHtml) {
+            const p = document.createElement('p');
+            p.textContent = currentHtml.trim();
+            const lastSection = resultContent.lastElementChild;
+            if(lastSection) lastSection.appendChild(p);
+
+        }
+        
         resultWrapper.classList.remove('hidden');
     }
 

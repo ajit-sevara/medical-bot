@@ -253,6 +253,7 @@
         .instruction-panel p { color: #6b7280; line-height: 1.6; margin: 0.5rem 0; }
         .instruction-panel strong { color: var(--text-color); }
 
+
         .face-oval-guide {
             width: 53%;
             height: 93%;
@@ -271,11 +272,10 @@
             height: 100%;
         }
         
-        /* --- ✨ UPDATED GUIDE POSITIONS --- */
-        .eye-guides { top: 45%; width: 40%; justify-content: space-between; }
-        .guide-container.lips-guide-pos { top: 55%; } /* Lips position */
-        .guide-container.tongue-guide-pos { top: 60%; } /* Tongue position */
-        .guide-container { top: 50%; justify-content: center; } /* Default for nails */
+        .eye-guides { top: 42%; width: 40%; justify-content: space-between; }
+        .guide-container.lips-guide-pos { top: 60%; }
+        .guide-container.tongue-guide-pos { top: 68%; }
+        .guide-container { top: 50%; justify-content: center; }
         
 
         .eye-circle, .lips-guide svg, .tongue-guide, .nails-guide {
@@ -397,26 +397,26 @@
     const resultContent = document.getElementById('result-content');
     const resetBtn = document.getElementById('resetBtn');
     
-    // --- ✨ UPDATED JAVASCRIPT SEQUENCE ---
+    // --- ✨ RESTORED FULL INSTRUCTION TEXT ---
     const captureSequence = [
         { 
             type: 'eyes', title: 'EYES', subtitle: 'This step scans your eyes for analysis.',
-            instructions: `<p><strong>Face Alignment...</strong></p>`,
+            instructions: `<p><strong>Face Alignment:</strong> Look directly at the camera and bring your face close enough so it is fully contained within the large outer oval guide on the screen.</p><p><strong>Eye Placement:</strong> Move your face slightly until each of your eyes aligns perfectly within the two smaller inner circles.</p><p><strong>Hold Still:</strong> Once your eyes are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>`,
             overlayHtml: `<div class="face-oval-guide"></div><div class="eye-guides"><div class="eye-circle"></div><div class="eye-circle"></div></div>` 
         },
         { 
             type: 'lips', title: 'LIPS', subtitle: 'This step focuses on scanning the color and condition of your lips.',
-            instructions: `<p><strong>Face Alignment...</strong></p>`,
+            instructions: `<p><strong>Face Alignment:</strong> Ensure your face remains within the large outer oval guide.</p><p><strong>Lip Placement:</strong> Align your lips with the lip-shaped outline provided inside the oval guide. Keep your lips relaxed and closed, but not tightly pressed.</p><p><strong>Hold Still:</strong> Once your lips are correctly placed, click the button below. Do not move until the scan is completed and you are in the next Step.</p>`,
             overlayHtml: `<div class="face-oval-guide"></div><div class="guide-container lips-guide-pos lips-guide"><svg viewBox="0 0 220 100"><path d="M10 50 C 30 20, 70 10, 110 20 C 150 10, 190 20, 210 50 C 190 80, 150 90, 110 80 C 70 90, 30 80, 10 50 Z" /></svg></div>`
         },
         { 
             type: 'tongue', title: 'TONGUE', subtitle: 'This step requires a clear view of your tongue.',
-            instructions: `<p><strong>Face Alignment...</strong></p>`,
+            instructions: `<p><strong>Face Alignment:</strong> Keep your face aligned within the large outer oval guide.</p><p><strong>Tongue Placement:</strong> Open your mouth and stick out your tongue naturally. Align your tongue with the tongue-shaped outline provided inside the oval guide.</p><p><strong>Hold Still:</strong> Keep your tongue still and steady and click the button below. Do not move until the scan is completed and you are in the next Step.</p>`,
             overlayHtml: `<div class="face-oval-guide"></div><div class="guide-container tongue-guide-pos"><div class="tongue-guide"></div></div>` 
         },
         { 
             type: 'nails', title: 'NAILS', subtitle: 'This step scans the surface and nail bed of your fingernails.',
-            instructions: `<p><strong>Hand Prep...</strong></p>`,
+            instructions: `<p><strong>Hand Prep:</strong> Ensure your nails are clean and free of polish.</p><p><strong>Placement:</strong> Place the tips of your fingers over the screen so that all five nails are visible and contained within the rectangular box guide.</p><p><strong>Hold Still:</strong> Hold your hand steady and click the button below. Do not move until the scan is completed and you see the final analysis.</p>`,
             overlayHtml: `<div class="guide-container"><div class="nails-guide"></div></div>`
         }
     ];
@@ -450,7 +450,7 @@
         stepIndicator.textContent = `STEP ${currentStep + 1} OF ${captureSequence.length}`;
         stepTitle.textContent = step.title;
         stepSubtitle.textContent = step.subtitle;
-        stepInstructions.innerHTML = step.instructions.replace(/<p><strong>.*?<\/strong>.*<\/p>/g, (match) => match.includes('Face Alignment') ? match.substring(0, 100) + '...' : match); // Truncating for brevity
+        stepInstructions.innerHTML = step.instructions;
         cameraOverlay.innerHTML = step.overlayHtml;
 
         if (currentStep === captureSequence.length - 1) {

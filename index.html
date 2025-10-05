@@ -33,7 +33,7 @@
             border-radius: 16px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             width: 100%;
-            max-width: 700px; /* Slightly wider container */
+            max-width: 700px;
             padding: 2.5rem;
             text-align: center;
             display: flex;
@@ -100,14 +100,13 @@
             animation: spin 1s linear infinite;
         }
         
-        /* --- ✨ UPDATED RESULT BOX UI --- */
         .result-wrapper {
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
-            border-radius: 16px; /* Match container radius */
+            border-radius: 16px;
             text-align: left;
-            padding: 2.5rem; /* More padding */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
         .result-wrapper button {
@@ -115,9 +114,9 @@
         }
 
         .result-wrapper h3 {
-            margin: 0 0 1.5rem 0; /* More space below header */
+            margin: 0 0 1.5rem 0;
             color: var(--primary-color);
-            font-size: 1.5rem; /* Larger header */
+            font-size: 1.5rem;
             font-weight: 700;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--border-color);
@@ -125,19 +124,17 @@
         }
         
         #result-content {
-            max-height: 400px; /* Taller scroll area */
+            max-height: 400px;
             overflow-y: auto;
             text-align: left;
             padding-right: 1rem;
         }
         
-        /* Modern scrollbar styling */
         #result-content::-webkit-scrollbar { width: 8px; }
         #result-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         #result-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
         #result-content::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
-        /* Styles for parsed content */
         .result-section {
             margin-bottom: 1.25rem;
         }
@@ -155,10 +152,8 @@
             color: #475569;
             margin: 0;
             white-space: pre-wrap;
-            overflow-wrap: break-word; /* This is the key to prevent horizontal scroll */
+            overflow-wrap: break-word;
         }
-        /* --- End of Updated Styles --- */
-
 
         .hidden {
             display: none !important;
@@ -326,17 +321,22 @@
         @media (max-width: 1024px) {
             #captureScreen {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 1.5rem; /* Increased gap */
                 padding: 1rem;
-                padding-top: 4rem;
+            }
+            .capture-main {
+                order: 1; /* Camera view first */
+            }
+            .instruction-panel {
+                order: 2; /* Instructions second */
+                max-width: 90vw;
             }
             .video-container { width: 90vw; height: calc(90vw * 0.75); }
-            .instruction-panel { max-width: 90vw; }
             .capture-buttons {
-                flex-direction: column;
+                flex-direction: row; /* Keep buttons side-by-side */
             }
             #backBtn, #captureBtn {
-                flex: none;
+                flex: 1; /* Give them equal space on smallest screens */
             }
         }
         @media (max-width: 768px) {
@@ -406,7 +406,7 @@
     const statusBox = document.getElementById('statusBox');
     const statusText = document.getElementById('statusText');
     const resultWrapper = document.getElementById('resultWrapper');
-    const resultContent = document.getElementById('result-content'); // Updated reference
+    const resultContent = document.getElementById('result-content');
     const resetBtn = document.getElementById('resetBtn');
     
     const captureSequence = [
@@ -597,48 +597,27 @@
         }, 3000); 
     }
 
-    // --- ✨ UPDATED displayResult Function ---
     function displayResult(result) {
         statusBox.classList.add('hidden');
-        
-        // Clear previous results
         resultContent.innerHTML = '';
-
-        // Split the result text by lines
         const lines = result.trim().split('\n');
-        let currentHtml = '';
-        
+        let currentSection = null;
+
         lines.forEach(line => {
             line = line.trim();
             if (line.endsWith(':')) {
-                // This line is a heading
-                if (currentHtml) { // Append the previous section before starting a new one
-                    const p = document.createElement('p');
-                    p.textContent = currentHtml.trim();
-                    const lastSection = resultContent.lastElementChild;
-                    if(lastSection) lastSection.appendChild(p);
-                }
-                currentHtml = ''; // Reset for the next section's content
-                const section = document.createElement('div');
-                section.className = 'result-section';
+                currentSection = document.createElement('div');
+                currentSection.className = 'result-section';
                 const h4 = document.createElement('h4');
                 h4.textContent = line;
-                section.appendChild(h4);
-                resultContent.appendChild(section);
-            } else if (line) {
-                // This is content for the current heading
-                currentHtml += line + '\n';
+                currentSection.appendChild(h4);
+                resultContent.appendChild(currentSection);
+            } else if (line && currentSection) {
+                const p = document.createElement('p');
+                p.textContent = line;
+                currentSection.appendChild(p);
             }
         });
-
-        // Append the last section's content
-        if (currentHtml) {
-            const p = document.createElement('p');
-            p.textContent = currentHtml.trim();
-            const lastSection = resultContent.lastElementChild;
-            if(lastSection) lastSection.appendChild(p);
-
-        }
         
         resultWrapper.classList.remove('hidden');
     }

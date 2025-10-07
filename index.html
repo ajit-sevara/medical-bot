@@ -168,17 +168,14 @@
             background-color: var(--modal-bg);
             z-index: 1000;
             display: flex;
-            flex-direction: column; /* Default to column for mobile */
             align-items: center;
             justify-content: center;
-            gap: 1.5rem;
-            padding: 1rem;
+            gap: 2rem;
+            padding: 2rem;
             box-sizing: border-box;
             color: var(--text-color);
-
-            /* ✨ ADDED PADDING FOR IPHONE SAFE AREAS */
-            padding-top: env(safe-area-inset-top, 1rem);
-            padding-bottom: env(safe-area-inset-bottom, 1rem);
+            padding-top: env(safe-area-inset-top, 2rem);
+            padding-bottom: env(safe-area-inset-bottom, 2rem);
         }
 
         .capture-buttons {
@@ -318,27 +315,42 @@
 
         @keyframes scanEffect { 0% { top: 0%; } 100% { top: calc(100% - 3px); } }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* --- ✨ UPDATED MEDIA QUERIES FOR BETTER LAYOUT --- */
+        
+        /* --- ✨ UPDATED MEDIA QUERIES --- */
         /* For large screens, like desktop */
-        @media (min-width: 1025px) {
+        @media (min-width: 901px) {
             #captureScreen {
-                flex-direction: row; /* Side-by-side layout */
+                flex-direction: row;
             }
         }
-        /* For tablets and small desktops */
-        @media (max-width: 1024px) {
-            .capture-main { order: 1; }
-            .instruction-panel { order: 2; max-width: 90vw; }
-            .video-container { width: 90vw; height: calc(90vw * 0.75); }
+        /* For tablets and mobile phones */
+        @media (max-width: 900px) {
+            #captureScreen {
+                flex-direction: column;
+                justify-content: flex-start; /* Align to top */
+                gap: 1.5rem;
+                padding: 1rem;
+                padding-top: env(safe-area-inset-top, 1rem);
+                padding-bottom: env(safe-area-inset-bottom, 1rem);
+            }
+            .capture-main {
+                width: 100%; /* Ensure main container takes full width */
+            }
+            .video-container { 
+                width: 90vw; 
+                max-width: 400px;
+                height: calc(90vw * 0.75);
+                max-height: 300px;
+                margin: 0 auto; /* Center the video container */
+            }
+            .instruction-panel { 
+                max-width: 100%; 
+                text-align: center;
+                margin-top: auto; /* Push to the bottom */
+            }
+            .instruction-panel p { text-align: left; }
             .capture-buttons { flex-direction: row; }
             #backBtn, #captureBtn { flex: 1; }
-        }
-        /* For mobile phones */
-        @media (max-width: 768px) {
-            .app-container { padding: 1.5rem; }
-            header h1 { font-size: 1.5rem; }
-            #captureScreen { justify-content: flex-start; } /* Align content to the top */
         }
     </style>
 </head>
@@ -372,6 +384,10 @@
                 <div class="scan-line"></div>
             </div>
         </div>
+        <div class="capture-buttons">
+            <button id="backBtn" class="hidden">← Back</button>
+            <button id="captureBtn" class="action-button"></button>
+        </div>
     </div>
     <div class="instruction-panel">
         <h2 id="stepIndicator"></h2>
@@ -379,14 +395,11 @@
         <p id="stepSubtitle"></p>
         <h4>Instructions:</h4>
         <div id="stepInstructions"></div>
-        <div class="capture-buttons">
-            <button id="backBtn" class="hidden">← Back</button>
-            <button id="captureBtn" class="action-button"></button>
-        </div>
     </div>
 </div>
 
 <script>
+    // Script remains the same as the last version
     const appContainer = document.getElementById('appContainer');
     const welcomeView = document.getElementById('welcomeView');
     const startBtn = document.getElementById('startBtn');

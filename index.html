@@ -272,12 +272,11 @@
             height: 100%;
         }
         
-        .eye-guides { top: 42%; width: 40%; justify-content: space-between; }
-        .guide-container.lips-guide-pos { top: 60%; }
-        .guide-container.tongue-guide-pos { top: 68%; }
+        .eye-guides { top: 45%; width: 40%; justify-content: space-between; }
+        .guide-container.lips-guide-pos { top: 55%; }
+        .guide-container.tongue-guide-pos { top: 60%; }
         .guide-container { top: 50%; justify-content: center; }
         
-
         .eye-circle, .lips-guide svg, .tongue-guide, .nails-guide {
             filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
             border: 3px solid rgba(255, 255, 255, 0.8);
@@ -324,8 +323,17 @@
             .capture-main { order: 1; }
             .instruction-panel { order: 2; max-width: 90vw; }
             .video-container { width: 90vw; height: calc(90vw * 0.75); }
-            .capture-buttons { flex-direction: row; }
-            #backBtn, #captureBtn { flex: 1; }
+            
+            /* --- ✨ CORRECTED BUTTON LAYOUT --- */
+            .capture-buttons {
+                flex-direction: row; /* This ensures they are side-by-side */
+            }
+            #backBtn {
+                flex: 1; /* Takes 1 part of the space */
+            }
+            #captureBtn {
+                flex: 2; /* Takes 2 parts of the space */
+            }
         }
         @media (max-width: 768px) {
             .app-container { padding: 1.5rem; }
@@ -397,7 +405,6 @@
     const resultContent = document.getElementById('result-content');
     const resetBtn = document.getElementById('resetBtn');
     
-    // --- ✨ RESTORED FULL INSTRUCTION TEXT ---
     const captureSequence = [
         { 
             type: 'eyes', title: 'EYES', subtitle: 'This step scans your eyes for analysis.',

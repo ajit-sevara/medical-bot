@@ -245,7 +245,7 @@
         
         .instruction-panel {
             max-width: 400px;
-            text-align: left;
+            text-align: left; /* ✨ This ensures all text inside aligns left */
         }
 
         .instruction-panel h2, .instruction-panel h3, .instruction-panel p, .instruction-panel h4 { margin: 0; }
@@ -316,39 +316,30 @@
         @keyframes scanEffect { 0% { top: 0%; } 100% { top: calc(100% - 3px); } }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* --- ✨ UPDATED MEDIA QUERIES --- */
-        /* For large screens, like desktop */
         @media (min-width: 901px) {
             #captureScreen {
                 flex-direction: row;
             }
         }
-        /* For tablets and mobile phones */
         @media (max-width: 900px) {
             #captureScreen {
                 flex-direction: column;
-                justify-content: flex-start; /* Align to top */
+                justify-content: flex-start;
                 gap: 1.5rem;
                 padding: 1rem;
                 padding-top: env(safe-area-inset-top, 1rem);
                 padding-bottom: env(safe-area-inset-bottom, 1rem);
+                overflow-y: auto; /* ✨ This makes the whole screen scrollable on small devices */
             }
-            .capture-main {
-                width: 100%; /* Ensure main container takes full width */
-            }
+            .capture-main { order: 1; width: 100%;}
+            .instruction-panel { order: 2; max-width: 100%; } /* Allow full width */
             .video-container { 
                 width: 90vw; 
                 max-width: 400px;
                 height: calc(90vw * 0.75);
                 max-height: 300px;
-                margin: 0 auto; /* Center the video container */
+                margin: 0 auto;
             }
-            .instruction-panel { 
-                max-width: 100%; 
-                text-align: center;
-                margin-top: auto; /* Push to the bottom */
-            }
-            .instruction-panel p { text-align: left; }
             .capture-buttons { flex-direction: row; }
             #backBtn, #captureBtn { flex: 1; }
         }
@@ -384,10 +375,6 @@
                 <div class="scan-line"></div>
             </div>
         </div>
-        <div class="capture-buttons">
-            <button id="backBtn" class="hidden">← Back</button>
-            <button id="captureBtn" class="action-button"></button>
-        </div>
     </div>
     <div class="instruction-panel">
         <h2 id="stepIndicator"></h2>
@@ -395,11 +382,16 @@
         <p id="stepSubtitle"></p>
         <h4>Instructions:</h4>
         <div id="stepInstructions"></div>
+        <div class="capture-buttons">
+            <button id="backBtn" class="hidden">← Back</button>
+            <button id="captureBtn" class="action-button"></button>
+        </div>
     </div>
 </div>
 
 <script>
-    // Script remains the same as the last version
+    // The JavaScript does not need any changes for this layout fix.
+    // You can keep your existing <script> block.
     const appContainer = document.getElementById('appContainer');
     const welcomeView = document.getElementById('welcomeView');
     const startBtn = document.getElementById('startBtn');

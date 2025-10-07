@@ -255,6 +255,7 @@
         .instruction-panel p { color: #6b7280; line-height: 1.6; margin: 0.5rem 0; }
         .instruction-panel strong { color: var(--text-color); }
 
+
         .face-oval-guide {
             width: 53%;
             height: 93%;
@@ -331,8 +332,10 @@
                 overflow-y: auto;
             }
             .capture-main { width: 100%; }
-            .instruction-panel { max-width: 100%; text-align: center; }
-            .instruction-panel p { text-align: left; }
+            .instruction-panel { 
+                max-width: 100%; 
+                /* text-align: center; <-- This was the problem, now removed */
+            }
             .video-container { 
                 width: 90vw; 
                 max-width: 400px;
@@ -390,7 +393,7 @@
 </div>
 
 <script>
-    // Script remains the same
+    // The JavaScript does not need any changes for this layout fix.
     const appContainer = document.getElementById('appContainer');
     const welcomeView = document.getElementById('welcomeView');
     const startBtn = document.getElementById('startBtn');

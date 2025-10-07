@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Visual Health AI Analysis</title>
     <style>
         :root {
@@ -168,12 +168,17 @@
             background-color: var(--modal-bg);
             z-index: 1000;
             display: flex;
+            flex-direction: column; /* Default to column for mobile */
             align-items: center;
             justify-content: center;
-            gap: 2rem;
-            padding: 2rem;
+            gap: 1.5rem;
+            padding: 1rem;
             box-sizing: border-box;
             color: var(--text-color);
+
+            /* ✨ ADDED PADDING FOR IPHONE SAFE AREAS */
+            padding-top: env(safe-area-inset-top, 1rem);
+            padding-bottom: env(safe-area-inset-bottom, 1rem);
         }
 
         .capture-buttons {
@@ -314,30 +319,26 @@
         @keyframes scanEffect { 0% { top: 0%; } 100% { top: calc(100% - 3px); } }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        @media (max-width: 1024px) {
+        /* --- ✨ UPDATED MEDIA QUERIES FOR BETTER LAYOUT --- */
+        /* For large screens, like desktop */
+        @media (min-width: 1025px) {
             #captureScreen {
-                flex-direction: column;
-                gap: 1.5rem;
-                padding: 1rem;
+                flex-direction: row; /* Side-by-side layout */
             }
+        }
+        /* For tablets and small desktops */
+        @media (max-width: 1024px) {
             .capture-main { order: 1; }
             .instruction-panel { order: 2; max-width: 90vw; }
             .video-container { width: 90vw; height: calc(90vw * 0.75); }
-            
-            /* --- ✨ CORRECTED BUTTON LAYOUT --- */
-            .capture-buttons {
-                flex-direction: row; /* This ensures they are side-by-side */
-            }
-            #backBtn {
-                flex: 1; /* Takes 1 part of the space */
-            }
-            #captureBtn {
-                flex: 2; /* Takes 2 parts of the space */
-            }
+            .capture-buttons { flex-direction: row; }
+            #backBtn, #captureBtn { flex: 1; }
         }
+        /* For mobile phones */
         @media (max-width: 768px) {
             .app-container { padding: 1.5rem; }
             header h1 { font-size: 1.5rem; }
+            #captureScreen { justify-content: flex-start; } /* Align content to the top */
         }
     </style>
 </head>

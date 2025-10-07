@@ -245,7 +245,7 @@
         
         .instruction-panel {
             max-width: 400px;
-            text-align: left; /* ✨ This ensures all text inside aligns left */
+            text-align: left;
         }
 
         .instruction-panel h2, .instruction-panel h3, .instruction-panel p, .instruction-panel h4 { margin: 0; }
@@ -254,7 +254,6 @@
         .instruction-panel h4 { margin-top: 1rem; }
         .instruction-panel p { color: #6b7280; line-height: 1.6; margin: 0.5rem 0; }
         .instruction-panel strong { color: var(--text-color); }
-
 
         .face-oval-guide {
             width: 53%;
@@ -329,10 +328,11 @@
                 padding: 1rem;
                 padding-top: env(safe-area-inset-top, 1rem);
                 padding-bottom: env(safe-area-inset-bottom, 1rem);
-                overflow-y: auto; /* ✨ This makes the whole screen scrollable on small devices */
+                overflow-y: auto;
             }
-            .capture-main { order: 1; width: 100%;}
-            .instruction-panel { order: 2; max-width: 100%; } /* Allow full width */
+            .capture-main { width: 100%; }
+            .instruction-panel { max-width: 100%; text-align: center; }
+            .instruction-panel p { text-align: left; }
             .video-container { 
                 width: 90vw; 
                 max-width: 400px;
@@ -375,6 +375,10 @@
                 <div class="scan-line"></div>
             </div>
         </div>
+        <div class="capture-buttons">
+            <button id="backBtn" class="hidden">← Back</button>
+            <button id="captureBtn" class="action-button"></button>
+        </div>
     </div>
     <div class="instruction-panel">
         <h2 id="stepIndicator"></h2>
@@ -382,16 +386,11 @@
         <p id="stepSubtitle"></p>
         <h4>Instructions:</h4>
         <div id="stepInstructions"></div>
-        <div class="capture-buttons">
-            <button id="backBtn" class="hidden">← Back</button>
-            <button id="captureBtn" class="action-button"></button>
-        </div>
     </div>
 </div>
 
 <script>
-    // The JavaScript does not need any changes for this layout fix.
-    // You can keep your existing <script> block.
+    // Script remains the same
     const appContainer = document.getElementById('appContainer');
     const welcomeView = document.getElementById('welcomeView');
     const startBtn = document.getElementById('startBtn');
